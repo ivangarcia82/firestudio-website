@@ -1,0 +1,80 @@
+---
+import { waHref } from '../data/site';
+---
+
+<header id="inicio" class="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <p class="eyebrow">Estudio de desarrollo web · Mérida, Yucatán</p>
+    <h1 class="hero-title">
+      Tu negocio merece un sitio que{' '}
+      <span class="gradient-text">no se parezca a ningún otro</span>.
+    </h1>
+    <p class="hero-lead">
+      Diseñamos y desarrollamos sitios web, tiendas en línea y aplicaciones que hacen crecer
+      negocios. Hablas directo con quienes construyen tu proyecto.
+    </p>
+    <div class="hero-actions">
+      <a href={waHref} target="_blank" rel="noopener" class="btn-fire">Cuéntanos tu proyecto</a>
+      <a href="#trabajo" class="link-underline">Ver trabajo ↓</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hero {
+    position: relative;
+    padding: clamp(72px, 12vw, 150px) clamp(20px, 5vw, 56px) clamp(80px, 10vw, 140px);
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    bottom: -35%;
+    left: -10%;
+    width: 75%;
+    height: 80%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(226, 59, 30, 0.32) 0%,
+      rgba(255, 122, 45, 0.14) 45%,
+      transparent 70%
+    );
+    filter: blur(40px);
+    animation: heatDrift 14s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    max-width: 1100px;
+  }
+
+  .eyebrow { margin-bottom: 28px; }
+
+  .hero-title {
+    margin: 0 0 28px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(40px, 7.5vw, 96px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .hero-lead {
+    margin: 0 0 40px;
+    max-width: 560px;
+    font-size: clamp(17px, 2vw, 20px);
+    line-height: 1.55;
+    color: rgba(242, 233, 225, 0.75);
+    text-wrap: pretty;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+  }
+</style>

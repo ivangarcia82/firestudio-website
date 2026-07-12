@@ -1,0 +1,84 @@
+---
+import { waHref } from '../data/site';
+
+const links = [
+  { href: '/#trabajo', label: 'Trabajo' },
+  { href: '/#servicios', label: 'Servicios' },
+  { href: '/#proceso', label: 'Proceso' },
+  { href: '/#nosotros', label: 'Nosotros' },
+  { href: '/blog', label: 'Blog' },
+];
+---
+
+<nav class="nav">
+  <a href="/" class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-name">Fire Studio</span>
+  </a>
+
+  <div class="nav-links" data-desktop-only="true">
+    {links.map((l) => <a href={l.href} class="nav-link">{l.label}</a>)}
+  </div>
+
+  <a href={waHref} target="_blank" rel="noopener" class="btn-fire btn-fire--sm nav-cta">
+    Cuéntanos tu proyecto
+  </a>
+</nav>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px clamp(20px, 5vw, 56px);
+    background: rgba(23, 16, 15, 0.82);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(242, 233, 225, 0.08);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--fs-text);
+  }
+  .brand:hover { color: var(--fs-text); }
+
+  .brand-mark {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(160deg, #ffc24a 0%, #ff7a2d 45%, #e23b1e 100%);
+    border-radius: 0 50% 50% 50%;
+    transform: rotate(-45deg);
+  }
+
+  .brand-name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .nav-link {
+    color: rgba(242, 233, 225, 0.7);
+    transition: color 0.2s ease;
+  }
+  .nav-link:hover { color: var(--fs-amber); }
+
+  .nav-cta { flex-shrink: 0; }
+</style>

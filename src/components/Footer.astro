@@ -1,0 +1,120 @@
+---
+import { site, waHref, mailHref } from '../data/site';
+
+const sections = [
+  { href: '/#trabajo', label: 'Trabajo' },
+  { href: '/#servicios', label: 'Servicios' },
+  { href: '/#proceso', label: 'Cómo trabajamos' },
+  { href: '/#nosotros', label: 'Nosotros' },
+  { href: '/blog', label: 'Blog' },
+];
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-cols">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <span class="footer-mark" aria-hidden="true"></span>
+          <span class="footer-name">Fire Studio</span>
+        </div>
+        <p class="footer-tag">Diseño y desarrollo web desde Mérida, Yucatán.</p>
+      </div>
+
+      <div class="footer-group">
+        <p class="footer-heading mono">Secciones</p>
+        {sections.map((s) => <a href={s.href} class="footer-link">{s.label}</a>)}
+      </div>
+
+      <div class="footer-group">
+        <p class="footer-heading mono">Contacto</p>
+        <a href={waHref} target="_blank" rel="noopener" class="footer-link">WhatsApp</a>
+        <a href={mailHref} class="footer-link">{site.email}</a>
+      </div>
+
+      <div class="footer-group">
+        <p class="footer-heading mono">Redes</p>
+        <a href={site.instagram} target="_blank" rel="noopener" class="footer-link">Instagram</a>
+        <a href={site.tiktok} target="_blank" rel="noopener" class="footer-link">TikTok</a>
+        <a href={site.facebook} target="_blank" rel="noopener" class="footer-link">Facebook</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom mono">
+      <span>© 2026 Fire Studio · Mérida, Yucatán</span>
+      <a href="#" class="footer-legal">Aviso de privacidad</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: clamp(40px, 6vw, 64px) clamp(20px, 5vw, 56px) 110px;
+    background: var(--fs-bg);
+    border-top: 1px solid rgba(242, 233, 225, 0.08);
+  }
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  .footer-cols {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  .footer-brand { display: flex; flex-direction: column; gap: 12px; max-width: 300px; }
+  .footer-logo { display: flex; align-items: center; gap: 10px; }
+  .footer-mark {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(160deg, #ffc24a 0%, #ff7a2d 45%, #e23b1e 100%);
+    border-radius: 0 50% 50% 50%;
+    transform: rotate(-45deg);
+  }
+  .footer-name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 17px;
+  }
+  .footer-tag {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(242, 233, 225, 0.55);
+  }
+
+  .footer-group { display: flex; flex-direction: column; gap: 10px; }
+  .footer-heading {
+    margin: 0 0 4px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(242, 233, 225, 0.45);
+  }
+  .footer-link {
+    font-size: 14px;
+    color: rgba(242, 233, 225, 0.7);
+    transition: color 0.2s ease;
+  }
+  .footer-link:hover { color: var(--fs-amber); }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(242, 233, 225, 0.08);
+    font-size: 12px;
+    color: rgba(242, 233, 225, 0.4);
+  }
+  .footer-legal { color: rgba(242, 233, 225, 0.4); }
+  .footer-legal:hover { color: var(--fs-amber); }
+</style>

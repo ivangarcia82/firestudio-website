@@ -1,0 +1,193 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Contact from '../../components/Contact.astro';
+import Footer from '../../components/Footer.astro';
+import WhatsAppFab from '../../components/WhatsAppFab.astro';
+import { getSortedPosts, formatDate } from '../../lib/blog';
+
+const posts = await getSortedPosts();
+const [lead, ...rest] = posts;
+---
+
+<Layout
+  title="Blog — Fire Studio"
+  description="Respuestas directas sobre sitios web, tiendas en línea y desarrollo, desde Mérida. Sin rodeos."
+>
+  <Nav />
+
+  <section class="blog-page">
+    <header class="blog-hero">
+      <p class="eyebrow">Blog</p>
+      <h1 class="blog-h1">Respuestas directas, sin rodeos.</h1>
+      <p class="blog-sub">
+        Lo que explicamos a nuestros clientes sobre sitios web, tiendas en línea y cómo hacer crecer
+        un negocio en internet.
+      </p>
+    </header>
+
+    {
+      lead && (
+        <a href={`/blog/${lead.id}`} class="lead-card" aria-label={lead.data.title}>
+          <div class="lead-media">
+            <Image src={lead.data.cover} alt={lead.data.coverAlt} class="media-cover" widths={[480, 900, 1400]} sizes="(max-width: 900px) 100vw, 60vw" />
+          </div>
+          <div class="lead-body">
+            <span class="chip chip--amber">{lead.data.category}</span>
+            <h2 class="lead-title">{lead.data.title}</h2>
+            <p class="lead-excerpt">{lead.data.description}</p>
+            <p class="lead-meta mono">{formatDate(lead.data.date)} · {lead.data.readingTime}</p>
+          </div>
+        </a>
+      )
+    }
+
+    {
+      rest.length > 0 && (
+        <div class="posts-grid" data-reveal-group>
+          {rest.map((post) => (
+            <a href={`/blog/${post.id}`} class="post-card" aria-label={post.data.title}>
+              <div class="post-media">
+                <Image src={post.data.cover} alt={post.data.coverAlt} class="media-cover" widths={[320, 560, 800]} sizes="(max-width: 760px) 100vw, 50vw" />
+                <span class="post-chip mono">{post.data.category}</span>
+              </div>
+              <div class="post-body">
+                <h3 class="post-title">{post.data.title}</h3>
+                <p class="post-excerpt">{post.data.description}</p>
+                <p class="post-meta mono">{formatDate(post.data.date)} · {post.data.readingTime}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </section>
+
+  <Contact />
+  <Footer />
+  <WhatsAppFab />
+</Layout>
+
+<style>
+  .blog-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(40px, 7vw, 88px) clamp(20px, 5vw, 56px) clamp(48px, 7vw, 88px);
+    border-top: 1px solid rgba(242, 233, 225, 0.08);
+  }
+
+  .blog-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 720px;
+    margin-bottom: clamp(36px, 5vw, 56px);
+  }
+  .blog-h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(36px, 6vw, 68px);
+    line-height: 1.03;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .blog-sub {
+    margin: 0;
+    font-size: clamp(16px, 2vw, 19px);
+    line-height: 1.6;
+    color: rgba(242, 233, 225, 0.72);
+    text-wrap: pretty;
+  }
+
+  /* Lead / featured post */
+  .lead-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    border: 1px solid rgba(242, 233, 225, 0.12);
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--fs-bg-2);
+    color: var(--fs-text);
+    margin-bottom: 28px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .lead-card:hover { border-color: rgba(255, 122, 45, 0.5); transform: translateY(-3px); color: var(--fs-text); }
+  @media (min-width: 900px) {
+    .lead-card { grid-template-columns: 1.2fr 1fr; }
+  }
+  .lead-media { position: relative; min-height: 280px; overflow: hidden; }
+  .lead-media .media-cover { transition: transform 0.4s ease; }
+  .lead-card:hover .lead-media .media-cover { transform: scale(1.03); }
+  .lead-body {
+    padding: clamp(28px, 4vw, 44px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: center;
+  }
+  .lead-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(24px, 3vw, 34px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .lead-excerpt {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.55;
+    color: rgba(242, 233, 225, 0.72);
+  }
+  .lead-meta { font-size: 12.5px; color: rgba(242, 233, 225, 0.5); }
+
+  /* Grid */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 28px;
+  }
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(242, 233, 225, 0.12);
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--fs-bg-2);
+    color: var(--fs-text);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .post-card:hover { border-color: rgba(255, 122, 45, 0.5); transform: translateY(-3px); color: var(--fs-text); }
+  .post-media { position: relative; height: 210px; overflow: hidden; }
+  .post-media .media-cover { transition: transform 0.4s ease; }
+  .post-card:hover .post-media .media-cover { transform: scale(1.04); }
+  .post-chip {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(23, 16, 15, 0.82);
+    backdrop-filter: blur(6px);
+    color: var(--fs-amber);
+    border: 1px solid rgba(255, 194, 74, 0.35);
+  }
+  .post-body { padding: 22px 24px 26px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .post-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(19px, 2vw, 23px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .post-excerpt { margin: 0; font-size: 14.5px; line-height: 1.5; color: rgba(242, 233, 225, 0.65); }
+  .post-meta { margin: auto 0 0; padding-top: 6px; font-size: 12px; color: rgba(242, 233, 225, 0.5); }
+</style>

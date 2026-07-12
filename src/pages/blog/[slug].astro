@@ -1,0 +1,206 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Contact from '../../components/Contact.astro';
+import Footer from '../../components/Footer.astro';
+import WhatsAppFab from '../../components/WhatsAppFab.astro';
+import { getSortedPosts, formatDate } from '../../lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await getSortedPosts();
+  return posts.map((post) => {
+    const related = posts.filter((p) => p.id !== post.id).slice(0, 2);
+    return { params: { slug: post.id }, props: { post, related } };
+  });
+}
+
+const { post, related } = Astro.props;
+const { Content } = await render(post);
+const { data } = post;
+---
+
+<Layout title={`${data.title} · Fire Studio`} description={data.description}>
+  <Nav />
+
+  <article class="post">
+    <header class="post-hero">
+      <a href="/blog" class="back mono">← Blog</a>
+      <div class="post-tags">
+        <span class="chip chip--amber">{data.category}</span>
+        <span class="mono post-hero-meta">{formatDate(data.date)} · {data.readingTime}</span>
+      </div>
+      <h1 class="post-h1">{data.title}</h1>
+      <p class="post-lead">{data.description}</p>
+    </header>
+
+    <div class="post-cover">
+      <Image src={data.cover} alt={data.coverAlt} widths={[600, 1000, 1600]} sizes="(max-width: 1000px) 100vw, 1000px" class="post-cover-img" loading="eager" />
+    </div>
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="more">
+        <div class="more-inner">
+          <h2 class="section-title more-title">Sigue leyendo</h2>
+          <div class="more-grid" data-reveal-group>
+            {related.map((p) => (
+              <a href={`/blog/${p.id}`} class="more-card" aria-label={p.data.title}>
+                <div class="more-media">
+                  <Image src={p.data.cover} alt={p.data.coverAlt} class="media-cover" widths={[320, 560]} sizes="(max-width: 760px) 100vw, 50vw" />
+                </div>
+                <div class="more-body">
+                  <span class="chip chip--amber">{p.data.category}</span>
+                  <h3 class="more-card-title">{p.data.title}</h3>
+                  <p class="more-meta mono">{formatDate(p.data.date)} · {p.data.readingTime}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <Contact />
+  <Footer />
+  <WhatsAppFab />
+</Layout>
+
+<style>
+  .post { border-top: 1px solid rgba(242, 233, 225, 0.08); }
+
+  .post-hero {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(40px, 7vw, 84px) clamp(20px, 5vw, 56px) clamp(24px, 3vw, 36px);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .back {
+    align-self: flex-start;
+    font-size: 13px;
+    color: rgba(242, 233, 225, 0.7);
+    transition: color 0.2s ease;
+  }
+  .back:hover { color: var(--fs-amber); }
+  .post-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .post-hero-meta { font-size: 12.5px; color: rgba(242, 233, 225, 0.5); }
+  .post-h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(32px, 5.5vw, 60px);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .post-lead {
+    margin: 0;
+    font-size: clamp(17px, 2vw, 20px);
+    line-height: 1.6;
+    color: rgba(242, 233, 225, 0.78);
+    text-wrap: pretty;
+  }
+
+  .post-cover {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 5vw, 56px);
+  }
+  .post-cover-img {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    border: 1px solid rgba(242, 233, 225, 0.12);
+    display: block;
+  }
+
+  /* Prose */
+  .prose {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(36px, 5vw, 60px) clamp(20px, 5vw, 56px) clamp(48px, 7vw, 80px);
+    font-size: clamp(16px, 1.7vw, 18px);
+    line-height: 1.7;
+    color: rgba(242, 233, 225, 0.85);
+  }
+  .prose :global(h2) {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(24px, 3vw, 32px);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 2em 0 0.6em;
+    color: var(--fs-text);
+    text-wrap: balance;
+  }
+  .prose :global(h3) {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(19px, 2.2vw, 23px);
+    letter-spacing: -0.01em;
+    margin: 1.6em 0 0.5em;
+    color: var(--fs-text);
+  }
+  .prose :global(p) { margin: 0 0 1.2em; }
+  .prose :global(a) { color: var(--fs-amber); border-bottom: 1px solid rgba(255, 194, 74, 0.35); }
+  .prose :global(a:hover) { color: var(--fs-orange); border-bottom-color: var(--fs-orange); }
+  .prose :global(strong) { color: var(--fs-text); font-weight: 600; }
+  .prose :global(ul),
+  .prose :global(ol) { margin: 0 0 1.4em; padding-left: 1.2em; display: flex; flex-direction: column; gap: 0.5em; }
+  .prose :global(li) { padding-left: 0.3em; }
+  .prose :global(li::marker) { color: var(--fs-orange); }
+  .prose :global(blockquote) {
+    margin: 1.6em 0;
+    padding: 4px 0 4px 22px;
+    border-left: 3px solid var(--fs-orange);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(19px, 2.2vw, 24px);
+    line-height: 1.35;
+    color: var(--fs-text);
+    text-wrap: balance;
+  }
+  .prose :global(blockquote p) { margin: 0; }
+
+  /* Related */
+  .more {
+    border-top: 1px solid rgba(242, 233, 225, 0.08);
+    background: var(--fs-bg-2);
+    padding: clamp(48px, 7vw, 80px) clamp(20px, 5vw, 56px);
+  }
+  .more-inner { max-width: 1100px; margin: 0 auto; }
+  .more-title { font-size: clamp(24px, 4vw, 38px); margin-bottom: clamp(24px, 4vw, 40px); }
+  .more-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .more-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(242, 233, 225, 0.12);
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--fs-bg);
+    color: var(--fs-text);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .more-card:hover { border-color: rgba(255, 122, 45, 0.5); transform: translateY(-3px); color: var(--fs-text); }
+  .more-media { position: relative; height: 170px; }
+  .more-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 10px; }
+  .more-card-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .more-meta { font-size: 12px; color: rgba(242, 233, 225, 0.5); }
+</style>

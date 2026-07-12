@@ -1,0 +1,179 @@
+/* ============================================================
+   Fire Studio — global design tokens & shared primitives
+   Ported from the Fire Studio design system.
+   ============================================================ */
+
+:root {
+  --fs-bg: #17100F;
+  --fs-bg-2: #20140F;
+  --fs-text: #F2E9E1;
+  --fs-red: #E23B1E;
+  --fs-orange-2: #FF5A26;
+  --fs-orange: #FF7A2D;
+  --fs-amber: #FFC24A;
+  --fs-fire: linear-gradient(90deg, #E23B1E, #FF7A2D, #FFC24A);
+
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-body: 'Instrument Sans', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+
+  /* Motion — strong custom curves (the built-in CSS easings lack punch) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--fs-bg);
+  color: var(--fs-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--fs-amber); text-decoration: none; }
+a:hover { color: var(--fs-orange); }
+
+::selection { background: var(--fs-red); color: var(--fs-text); }
+
+img { max-width: 100%; }
+
+@keyframes heatDrift {
+  0%   { transform: translate(-8%, 4%) scale(1);    opacity: .55; }
+  50%  { transform: translate(6%, -3%) scale(1.12); opacity: .8; }
+  100% { transform: translate(-8%, 4%) scale(1);    opacity: .55; }
+}
+
+/* ---- shared primitives ---- */
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.gradient-text {
+  background: var(--fs-fire);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Fire gradient pill button */
+.btn-fire {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 30px;
+  border-radius: 999px;
+  background: var(--fs-fire);
+  color: var(--fs-bg);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out), filter 160ms var(--ease-out);
+}
+.btn-fire:hover { filter: brightness(1.08); color: var(--fs-bg); }
+.btn-fire:active { transform: scale(0.97); }
+.btn-fire--sm { padding: 10px 18px; font-size: 14px; }
+
+/* Underlined mono link */
+.link-underline {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: var(--fs-text);
+  border-bottom: 1px solid rgba(242,233,225,.35);
+  padding-bottom: 3px;
+  transition: color .2s var(--ease-out), border-color .2s var(--ease-out);
+}
+.link-underline:hover { color: var(--fs-amber); border-bottom-color: var(--fs-amber); }
+
+.link-underline--amber {
+  color: var(--fs-amber);
+  border-bottom-color: rgba(255,194,74,.4);
+}
+.link-underline--amber:hover { color: var(--fs-orange); border-bottom-color: var(--fs-orange); }
+
+/* Chips / tags */
+.chip {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+.chip--gradient { background: var(--fs-fire); color: var(--fs-bg); font-weight: 700; }
+.chip--red { border: 1px solid rgba(226,59,30,.5); color: var(--fs-red); }
+.chip--amber { border: 1px solid rgba(255,194,74,.4); color: var(--fs-amber); }
+
+/* Section eyebrow */
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fs-orange);
+}
+
+/* Section headings */
+.section-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(32px, 5vw, 56px);
+  letter-spacing: -0.02em;
+}
+
+/* Fill-container media (cover) */
+.media-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---- Scroll reveal ----
+   Hidden state applies ONLY when JS is present (html.has-js) and the user
+   hasn't asked for reduced motion. So: no JS → content visible; reduced
+   motion → content visible; otherwise → subtle staggered fade-up on enter.
+   Driven by animation (not transition) so component-scoped `transition`
+   rules can't override it; `backwards` fill means it won't pin `transform`
+   afterward, leaving hover lifts free. */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .has-js [data-reveal],
+  .has-js [data-reveal-group] > * {
+    opacity: 0;
+  }
+  .has-js [data-reveal].is-in,
+  .has-js [data-reveal-group].is-in > * {
+    opacity: 1;
+    /* Longhands, not the `animation` shorthand — a var() inside the shorthand
+       makes Chrome drop animation-name. */
+    animation-name: reveal-up;
+    animation-duration: 0.6s;
+    animation-timing-function: var(--ease-out);
+    animation-fill-mode: backwards;
+    animation-delay: calc(var(--reveal-i, 0) * 60ms);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 760px) {
+  [data-desktop-only] { display: none !important; }
+}

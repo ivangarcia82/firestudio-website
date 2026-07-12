@@ -1,0 +1,122 @@
+---
+const steps = [
+  {
+    label: 'Paso 1',
+    color: '#E23B1E',
+    title: 'Platicamos',
+    body: 'Nos cuentas tu proyecto y entendemos tu negocio: qué vendes, a quién y qué quieres lograr.',
+  },
+  {
+    label: 'Paso 2',
+    color: '#FF5A26',
+    title: 'Te proponemos',
+    body: 'Diseño y alcance claro, con precio cerrado. Sabes exactamente qué recibes y cuánto cuesta antes de empezar.',
+  },
+  {
+    label: 'Paso 3',
+    color: '#FF7A2D',
+    title: 'Construimos',
+    body: 'Diseñamos y desarrollamos mostrándote avances. Nada de desaparecer tres meses.',
+  },
+  {
+    label: 'Paso 4',
+    color: '#FFC24A',
+    title: 'Publicamos y nos quedamos',
+    body: 'Tu sitio sale al mundo, te entregamos todo y seguimos cerca para mantenerlo y hacerlo crecer.',
+  },
+];
+
+const promises = [
+  { label: 'Promesa 1', color: 'var(--fs-orange)', text: 'Precios claros desde el inicio. Sin sorpresas a mitad del camino.' },
+  { label: 'Promesa 2', color: 'var(--fs-amber)', text: 'Tu dominio siempre queda a tu nombre. Es tuyo, no nuestro.' },
+];
+---
+
+<section id="proceso" class="process">
+  <div class="process-inner">
+    <h2 class="section-title process-title">Cómo trabajamos</h2>
+
+    <div class="steps" data-reveal-group>
+      {
+        steps.map((s) => (
+          <div class="step" style={`border-top-color: ${s.color};`}>
+            <span class="step-label mono" style={`color: ${s.color};`}>{s.label}</span>
+            <h3 class="step-title">{s.title}</h3>
+            <p class="step-body">{s.body}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="promises" data-reveal-group>
+      {
+        promises.map((p) => (
+          <div class="promise">
+            <p class="promise-label mono" style={`color: ${p.color};`}>{p.label}</p>
+            <p class="promise-text">{p.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .process {
+    padding: clamp(56px, 8vw, 110px) clamp(20px, 5vw, 56px);
+    border-top: 1px solid rgba(242, 233, 225, 0.08);
+  }
+  .process-inner { max-width: 1100px; margin: 0 auto; }
+  .process-title { margin-bottom: clamp(32px, 5vw, 56px); }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 32px;
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 2px solid;
+    padding-top: 20px;
+  }
+  .step-label { font-size: 13px; }
+  .step-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 21px;
+  }
+  .step-body {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: rgba(242, 233, 225, 0.7);
+  }
+
+  .promises {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: clamp(40px, 6vw, 64px);
+  }
+  .promise {
+    border: 1px solid rgba(242, 233, 225, 0.15);
+    border-radius: 16px;
+    padding: 26px 28px;
+    background: var(--fs-bg-2);
+  }
+  .promise-label {
+    margin: 0 0 6px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .promise-text {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 20px;
+  }
+</style>

@@ -1,0 +1,231 @@
+---
+import { site, waHref, mailHref } from '../data/site';
+
+const options = ['Sitio web', 'Tienda en línea', 'Aplicación', 'No estoy seguro'];
+---
+
+<section id="contacto" class="contact">
+  <div class="contact-inner">
+    <div class="contact-copy">
+      <h2 class="contact-title">Cuéntanos tu proyecto.</h2>
+      <p class="contact-lead">
+        Escríbenos por WhatsApp y platicamos. Sin compromiso, sin formularios eternos, sin
+        vendedores de por medio.
+      </p>
+      <a href={waHref} target="_blank" rel="noopener" class="wa-open">Abrir WhatsApp →</a>
+      <a href={mailHref} class="contact-mail mono">{site.email}</a>
+    </div>
+
+    <form class="contact-form" data-wa-number={site.whatsappNumber} novalidate>
+      <p class="form-eyebrow mono">O déjanos tus datos</p>
+
+      <label class="field">
+        Tu nombre
+        <input name="nombre" type="text" placeholder="¿Cómo te llamas?" autocomplete="name" />
+      </label>
+
+      <label class="field">
+        Tu WhatsApp
+        <input name="tel" type="tel" placeholder="999 123 4567" autocomplete="tel" />
+      </label>
+
+      <div class="chips-block">
+        <span class="chips-label">¿Qué necesitas?</span>
+        <div class="chips" role="group" aria-label="¿Qué necesitas?">
+          {
+            options.map((label) => (
+              <button type="button" class="need-chip" data-value={label} aria-pressed="false">
+                {label}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <button type="submit" class="form-submit">Enviar por WhatsApp</button>
+      <p class="form-note">Se abre WhatsApp con tu mensaje listo. Tú decides cuándo enviarlo.</p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .contact {
+    padding: clamp(64px, 9vw, 130px) clamp(20px, 5vw, 56px);
+    background: linear-gradient(120deg, #e23b1e 0%, #ff7a2d 55%, #ffc24a 100%);
+    color: var(--fs-bg);
+  }
+  .contact-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(36px, 6vw, 72px);
+    align-items: start;
+  }
+
+  .contact-copy { display: flex; flex-direction: column; gap: 22px; }
+  .contact-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(38px, 6vw, 72px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .contact-lead {
+    margin: 0;
+    font-size: clamp(16px, 2vw, 19px);
+    line-height: 1.55;
+    max-width: 440px;
+    color: rgba(23, 16, 15, 0.85);
+  }
+
+  .wa-open {
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 30px;
+    border-radius: 999px;
+    background: var(--fs-bg);
+    color: var(--fs-text);
+    font-weight: 600;
+    font-size: 16px;
+    transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out), transform 0.16s var(--ease-out);
+  }
+  .wa-open:hover { background: var(--fs-bg-2); color: var(--fs-amber); }
+  .wa-open:active { transform: scale(0.97); }
+
+  .contact-mail {
+    font-size: 14px;
+    color: var(--fs-bg);
+    border-bottom: 1px solid rgba(23, 16, 15, 0.4);
+    align-self: flex-start;
+    padding-bottom: 2px;
+  }
+  .contact-mail:hover { color: var(--fs-bg); border-bottom-color: var(--fs-bg); }
+
+  /* Form card */
+  .contact-form {
+    background: rgba(23, 16, 15, 0.92);
+    border-radius: 20px;
+    padding: clamp(24px, 3vw, 36px);
+    color: var(--fs-text);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .form-eyebrow {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fs-orange);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    color: rgba(242, 233, 225, 0.7);
+  }
+  .field input {
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(242, 233, 225, 0.2);
+    background: var(--fs-bg);
+    color: var(--fs-text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .field input:focus { border-color: var(--fs-orange); }
+
+  .chips-block { display: flex; flex-direction: column; gap: 8px; }
+  .chips-label { font-size: 14px; color: rgba(242, 233, 225, 0.7); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .need-chip {
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid rgba(242, 233, 225, 0.25);
+    color: rgba(242, 233, 225, 0.75);
+    transition: border-color 0.2s var(--ease-out), background 0.2s var(--ease-out), color 0.2s var(--ease-out), transform 0.14s var(--ease-out);
+  }
+  .need-chip:active { transform: scale(0.96); }
+  .need-chip[aria-pressed='true'] {
+    border-color: var(--fs-orange);
+    background: rgba(255, 122, 45, 0.15);
+    color: var(--fs-amber);
+  }
+
+  .form-submit {
+    margin-top: 4px;
+    padding: 15px 24px;
+    border-radius: 999px;
+    border: none;
+    background: var(--fs-fire);
+    color: var(--fs-bg);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.16s var(--ease-out), filter 0.16s var(--ease-out);
+  }
+  .form-submit:hover { filter: brightness(1.08); }
+  .form-submit:active { transform: scale(0.98); }
+
+  .form-note {
+    margin: 0;
+    font-size: 12.5px;
+    color: rgba(242, 233, 225, 0.45);
+  }
+</style>
+
+<script>
+  function initContactForm() {
+    const form = document.querySelector<HTMLFormElement>('.contact-form');
+    if (!form) return;
+
+    const number = (form.dataset.waNumber || '').replace(/\D/g, '');
+    const chips = Array.from(form.querySelectorAll<HTMLButtonElement>('.need-chip'));
+    let necesidad = '';
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const value = chip.dataset.value || '';
+        necesidad = necesidad === value ? '' : value;
+        chips.forEach((c) =>
+          c.setAttribute('aria-pressed', String(c.dataset.value === necesidad && necesidad !== '')),
+        );
+      });
+    });
+
+    const waLink = (msg: string) =>
+      'https://wa.me/' + number + '?text=' + encodeURIComponent(msg);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const nombre = String(data.get('nombre') || '').trim();
+      const tel = String(data.get('tel') || '').trim();
+
+      let msg = 'Hola, quiero contarles mi proyecto.';
+      if (nombre) msg += ' Soy ' + nombre + '.';
+      if (necesidad) msg += ' Necesito: ' + necesidad.toLowerCase() + '.';
+      if (tel) msg += ' Mi WhatsApp: ' + tel + '.';
+
+      window.open(waLink(msg), '_blank');
+    });
+  }
+
+  initContactForm();
+  document.addEventListener('astro:page-load', initContactForm);
+</script>

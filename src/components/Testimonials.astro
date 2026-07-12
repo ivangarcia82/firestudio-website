@@ -1,0 +1,82 @@
+---
+const testimonials = [
+  {
+    quote:
+      'Me explicaron todo sin tecnicismos y el precio fue el que acordamos desde el día uno. La tienda quedó con la personalidad editorial que buscábamos y hoy actualizamos cada colección solos.',
+    name: 'Daniela R.',
+    context: 'Sandra Weil · Tienda en línea',
+  },
+  {
+    quote:
+      'Siempre hablé con Ivan directamente. Le escribía por WhatsApp y me contestaba quien realmente estaba haciendo el sitio, no un intermediario.',
+    name: 'Jorge M.',
+    context: 'CEMEX Supply · E-commerce',
+  },
+  {
+    quote:
+      'Cada cambio en la ficha de producto lo probaron con datos antes de publicarlo. Dejamos de adivinar: ahora sabemos qué versión vende más.',
+    name: 'Mariana T.',
+    context: 'Sognare · CRO',
+  },
+];
+---
+
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <h2 class="section-title testimonials-title">Lo que dicen los clientes</h2>
+    <div class="testimonials-grid" data-reveal-group>
+      {
+        testimonials.map((t) => (
+          <figure class="testimonial">
+            <blockquote>{t.quote}</blockquote>
+            <figcaption>
+              <span class="testimonial-name">{t.name}</span>
+              <span class="testimonial-context mono">{t.context}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonials {
+    padding: clamp(56px, 8vw, 110px) clamp(20px, 5vw, 56px);
+    border-top: 1px solid rgba(242, 233, 225, 0.08);
+    background: var(--fs-bg-2);
+  }
+  .testimonials-inner { max-width: 1100px; margin: 0 auto; }
+  .testimonials-title { margin-bottom: clamp(32px, 5vw, 56px); }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .testimonial {
+    margin: 0;
+    border: 1px solid rgba(242, 233, 225, 0.12);
+    border-radius: 16px;
+    padding: 28px;
+    background: var(--fs-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .testimonial blockquote {
+    margin: 0;
+    font-size: 16.5px;
+    line-height: 1.6;
+    color: rgba(242, 233, 225, 0.85);
+  }
+  .testimonial blockquote::before { content: '“'; }
+  .testimonial blockquote::after { content: '”'; }
+  .testimonial figcaption { display: flex; flex-direction: column; gap: 2px; }
+  .testimonial-name { font-weight: 600; }
+  .testimonial-context {
+    font-size: 12px;
+    color: rgba(242, 233, 225, 0.5);
+  }
+</style>

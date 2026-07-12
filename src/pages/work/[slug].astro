@@ -1,0 +1,260 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Contact from '../../components/Contact.astro';
+import Footer from '../../components/Footer.astro';
+import WhatsAppFab from '../../components/WhatsAppFab.astro';
+import { projects } from '../../data/projects';
+import { waLink } from '../../data/site';
+
+export function getStaticPaths() {
+  return projects.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
+}
+
+const { project } = Astro.props;
+const related = projects.filter((p) => p.slug !== project.slug).slice(0, 3);
+const wa = waLink(`Hola, vi el caso de ${project.name} y quiero algo así para mi negocio.`);
+const host = new URL(project.liveUrl).hostname.replace(/^www\./, '');
+---
+
+<Layout
+  title={`${project.name} — Caso de estudio · Fire Studio`}
+  description={project.summary}
+>
+  <Nav />
+
+  <article class="case">
+    <header class="case-hero">
+      <a href="/#trabajo" class="back mono">← Trabajo</a>
+      <div class="case-tags">
+        <span class={`chip chip--${project.tone}`}>{project.category}</span>
+        <span class="mono case-year">{project.year}</span>
+      </div>
+      <h1 class="case-title">{project.name}</h1>
+      <p class="case-tagline">{project.tagline}</p>
+      <p class="case-overview">{project.overview}</p>
+      <div class="case-actions">
+        <a href={project.liveUrl} target="_blank" rel="noopener" class="btn-fire">Visitar sitio ↗</a>
+        <a href={wa} target="_blank" rel="noopener" class="link-underline">Quiero algo así →</a>
+      </div>
+    </header>
+
+    <div class="case-shot">
+      <Image src={project.image} alt={project.alt} widths={[600, 1000, 1600]} sizes="(max-width: 1200px) 100vw, 1200px" class="case-img" loading="eager" />
+    </div>
+
+    <div class="case-body">
+      <div class="case-detail">
+        <section class="phase">
+          <p class="phase-label mono">El reto</p>
+          <p class="phase-text">{project.reto}</p>
+        </section>
+        <section class="phase">
+          <p class="phase-label mono">La solución</p>
+          <p class="phase-text">{project.solucion}</p>
+        </section>
+        <section class="phase">
+          <p class="phase-label mono">El resultado</p>
+          <p class="phase-text">{project.resultado}</p>
+        </section>
+      </div>
+
+      <aside class="case-meta">
+        <div class="meta-block">
+          <p class="meta-label mono">Tecnologías</p>
+          <ul class="tech-list">
+            {project.tech.map((t) => <li>{t}</li>)}
+          </ul>
+        </div>
+        <div class="meta-block">
+          <p class="meta-label mono">Año</p>
+          <p class="meta-val">{project.year}</p>
+        </div>
+        <div class="meta-block">
+          <p class="meta-label mono">Sitio</p>
+          <a href={project.liveUrl} target="_blank" rel="noopener" class="meta-link">{host} ↗</a>
+        </div>
+      </aside>
+    </div>
+
+    <section class="related">
+      <div class="related-head">
+        <h2 class="section-title">Más proyectos</h2>
+        <a href="/#trabajo" class="link-underline link-underline--amber">Ver todo el trabajo →</a>
+      </div>
+      <div class="related-grid" data-reveal-group>
+        {
+          related.map((p) => (
+            <a href={`/work/${p.slug}`} class="rel-card" aria-label={`Ver caso: ${p.name}`}>
+              <div class="rel-media">
+                <Image src={p.image} alt={p.alt} widths={[320, 560]} sizes="(max-width: 760px) 100vw, 33vw" class="media-cover" />
+              </div>
+              <div class="rel-body">
+                <span class={`chip chip--${p.tone}`}>{p.category}</span>
+                <h3 class="rel-title">{p.name}</h3>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </article>
+
+  <Contact />
+  <Footer />
+  <WhatsAppFab />
+</Layout>
+
+<style>
+  .case { border-top: 1px solid rgba(242, 233, 225, 0.08); }
+
+  .case-hero {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: clamp(40px, 7vw, 88px) clamp(20px, 5vw, 56px) clamp(28px, 4vw, 44px);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .back {
+    align-self: flex-start;
+    font-size: 13px;
+    color: rgba(242, 233, 225, 0.7);
+    transition: color 0.2s ease;
+  }
+  .back:hover { color: var(--fs-amber); }
+  .case-tags { display: flex; align-items: center; gap: 12px; }
+  .case-year { font-size: 13px; color: rgba(242, 233, 225, 0.5); }
+  .case-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(38px, 6.5vw, 76px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .case-tagline {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fs-orange);
+  }
+  .case-overview {
+    margin: 8px 0 0;
+    font-size: clamp(17px, 2vw, 20px);
+    line-height: 1.6;
+    color: rgba(242, 233, 225, 0.8);
+    text-wrap: pretty;
+  }
+  .case-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    margin-top: 10px;
+  }
+
+  .case-shot {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 5vw, 56px);
+  }
+  .case-img {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    border: 1px solid rgba(242, 233, 225, 0.12);
+    display: block;
+  }
+
+  .case-body {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: clamp(48px, 7vw, 88px) clamp(20px, 5vw, 56px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(36px, 5vw, 64px);
+  }
+  @media (min-width: 860px) {
+    .case-body { grid-template-columns: 1fr 260px; align-items: start; }
+  }
+
+  .case-detail { display: flex; flex-direction: column; gap: 36px; }
+  .phase { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid rgba(242, 233, 225, 0.12); padding-top: 24px; }
+  .phase-label { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fs-orange); }
+  .phase-text {
+    margin: 0;
+    font-size: clamp(16px, 1.6vw, 18px);
+    line-height: 1.6;
+    color: rgba(242, 233, 225, 0.82);
+  }
+
+  .case-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 26px 28px;
+    border: 1px solid rgba(242, 233, 225, 0.12);
+    border-radius: 16px;
+    background: var(--fs-bg-2);
+  }
+  .meta-block { display: flex; flex-direction: column; gap: 8px; }
+  .meta-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(242, 233, 225, 0.5); }
+  .meta-val { margin: 0; font-size: 15px; }
+  .meta-link { font-size: 15px; color: var(--fs-amber); }
+  .meta-link:hover { color: var(--fs-orange); }
+  .tech-list { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tech-list li {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(242, 233, 225, 0.2);
+    color: rgba(242, 233, 225, 0.75);
+  }
+
+  /* Related */
+  .related {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 5vw, 56px) clamp(48px, 7vw, 88px);
+  }
+  .related-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: clamp(24px, 4vw, 40px);
+  }
+  .related-head .section-title { font-size: clamp(26px, 4vw, 40px); }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+  }
+  .rel-card {
+    border: 1px solid rgba(242, 233, 225, 0.12);
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--fs-bg-2);
+    color: var(--fs-text);
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .rel-card:hover { border-color: rgba(255, 122, 45, 0.5); transform: translateY(-3px); color: var(--fs-text); }
+  .rel-media { position: relative; height: 180px; }
+  .rel-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 10px; }
+  .rel-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+  }
+</style>

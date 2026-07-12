@@ -1,0 +1,117 @@
+---
+// Static, faithful port of the Fire Studio "Qué hacemos" section.
+---
+
+<section id="servicios" class="services">
+  <div class="services-inner">
+    <h2 class="section-title services-title">Qué hacemos</h2>
+    <div class="services-list" data-reveal-group>
+      <!-- 01 -->
+      <div class="service">
+        <div class="service-head">
+          <span class="service-num" style="color: var(--fs-red);">01</span>
+          <h3 class="service-name">Sitios web</h3>
+        </div>
+        <div class="service-copy">
+          <p>Páginas diseñadas a la medida del giro y la personalidad de tu negocio: corporativos, portafolios, landing pages. Se ven perfectas en cualquier pantalla.</p>
+          <p class="service-audience mono">Para negocios y marcas que quieren verse tan bien como trabajan.</p>
+        </div>
+      </div>
+
+      <!-- 02 — especialidad, destacada -->
+      <div class="service service--highlight">
+        <div class="service-head-col">
+          <div class="service-head">
+            <span class="service-num" style="color: var(--fs-orange);">02</span>
+            <h3 class="service-name">Tiendas en línea</h3>
+          </div>
+          <span class="chip chip--gradient">Nuestra especialidad</span>
+        </div>
+        <div class="service-copy">
+          <p class="service-body-strong">E-commerce completo en Shopify: diseño, desarrollo y ajustes para que más visitas se conviertan en ventas. Tu tienda vende mientras duermes, y tú la administras sin depender de nadie.</p>
+          <p class="service-audience mono">Para marcas de moda, retail y cualquiera que venda productos.</p>
+        </div>
+      </div>
+
+      <!-- 03 -->
+      <div class="service">
+        <div class="service-head">
+          <span class="service-num" style="color: var(--fs-amber);">03</span>
+          <h3 class="service-name">Aplicaciones y desarrollo a la medida</h3>
+        </div>
+        <div class="service-copy">
+          <p>Sistemas, plataformas e integraciones hechas exactamente para cómo trabaja tu negocio — no al revés.</p>
+          <p class="service-audience mono">Para empresas que ya no caben en las herramientas genéricas.</p>
+        </div>
+      </div>
+
+      <!-- 04 -->
+      <div class="service service--last">
+        <div class="service-head">
+          <span class="service-num" style="color: var(--fs-red);">04</span>
+          <h3 class="service-name">Mantenimiento y evolución</h3>
+        </div>
+        <div class="service-copy">
+          <p>Tu sitio siempre en línea, seguro y creciendo: hospedaje, respaldos y mejoras continuas sin que tengas que pensarlo.</p>
+          <p class="service-audience mono">Para quien ya tiene sitio y quiere dormir tranquilo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .services {
+    padding: clamp(56px, 8vw, 110px) clamp(20px, 5vw, 56px);
+    border-top: 1px solid rgba(242, 233, 225, 0.08);
+    background: var(--fs-bg-2);
+  }
+  .services-inner { max-width: 1100px; margin: 0 auto; }
+  .services-title { margin-bottom: clamp(32px, 5vw, 56px); }
+  .services-list { display: flex; flex-direction: column; }
+
+  .service {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px 40px;
+    padding: 32px 0;
+    border-top: 1px solid rgba(242, 233, 225, 0.12);
+  }
+  .service--last { border-bottom: 1px solid rgba(242, 233, 225, 0.12); }
+
+  .service--highlight {
+    padding: 32px 24px;
+    border: 1px solid rgba(255, 122, 45, 0.45);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(226, 59, 30, 0.1), rgba(255, 194, 74, 0.06));
+    margin: 12px 0;
+  }
+
+  .service-head { display: flex; gap: 18px; align-items: baseline; }
+  .service-head-col { display: flex; flex-direction: column; gap: 10px; }
+
+  .service-num { font-family: var(--font-mono); font-size: 14px; }
+
+  .service-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(22px, 2.5vw, 28px);
+    letter-spacing: -0.01em;
+  }
+
+  .service-copy { display: flex; flex-direction: column; gap: 8px; }
+  .service-copy p { margin: 0; }
+  .service-copy > p:first-child {
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: rgba(242, 233, 225, 0.75);
+  }
+  .service-body-strong { color: rgba(242, 233, 225, 0.8) !important; }
+
+  .service-audience {
+    font-size: 12.5px;
+    color: rgba(242, 233, 225, 0.5);
+  }
+  .service--highlight .service-audience { color: rgba(242, 233, 225, 0.55); }
+</style>

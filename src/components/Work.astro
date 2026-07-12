@@ -1,0 +1,213 @@
+---
+import { Image } from 'astro:assets';
+import { waHref } from '../data/site';
+import { featured, gridProjects } from '../data/projects';
+---
+
+<section id="trabajo" class="work">
+  <div class="work-inner">
+    <div class="work-head">
+      <h2 class="section-title">Trabajo</h2>
+      <p class="work-note mono">Ningún proyecto se parece a otro. Es a propósito.</p>
+    </div>
+
+    <!-- Caso destacado -->
+    <article class="featured" data-reveal>
+      <a href={`/work/${featured.slug}`} class="featured-media" aria-label={`Ver caso: ${featured.name}`}>
+        <Image src={featured.image} alt={featured.alt} class="media-cover" widths={[480, 800, 1200]} sizes="(max-width: 760px) 100vw, 50vw" />
+      </a>
+      <div class="featured-body">
+        <div class="featured-tags">
+          <span class="chip chip--gradient">Caso destacado</span>
+          <span class="chip chip--amber">{featured.category}</span>
+        </div>
+        <h3 class="featured-title">
+          <a href={`/work/${featured.slug}`}>{featured.name} — {featured.tagline.toLowerCase()}</a>
+        </h3>
+        <div class="featured-detail">
+          <p><strong class="detail-label">Reto</strong>{featured.reto}</p>
+          <p><strong class="detail-label">Solución</strong>{featured.solucion}</p>
+          <p><strong class="detail-label">Resultado</strong>{featured.resultado}</p>
+        </div>
+        <a href={`/work/${featured.slug}`} class="link-underline link-underline--amber featured-more">Ver caso completo →</a>
+      </div>
+    </article>
+
+    <!-- Grid de proyectos -->
+    <div class="grid" data-reveal-group>
+      {
+        gridProjects.map((p) => (
+          <a href={`/work/${p.slug}`} class="card" aria-label={`Ver caso: ${p.name}`}>
+            <div class="card-media">
+              <Image src={p.image} alt={p.alt} class="media-cover" widths={[320, 580, 900]} sizes="(max-width: 760px) 100vw, 33vw" />
+            </div>
+            <div class="card-body">
+              <span class={`chip chip--${p.tone}`}>{p.category}</span>
+              <h3 class="card-title">{p.name}</h3>
+              <p class="card-summary">{p.summary}</p>
+              <span class="card-more mono">Ver caso →</span>
+            </div>
+          </a>
+        ))
+      }
+
+      <article class="card card--cta">
+        <p class="mono cta-eyebrow">Siguiente proyecto</p>
+        <h3 class="cta-title">¿El tuyo?</h3>
+        <a href={waHref} target="_blank" rel="noopener" class="link-underline link-underline--amber">
+          Cuéntanos tu proyecto →
+        </a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .work {
+    padding: clamp(56px, 8vw, 110px) clamp(20px, 5vw, 56px);
+    border-top: 1px solid rgba(242, 233, 225, 0.08);
+  }
+  .work-inner { max-width: 1200px; margin: 0 auto; }
+
+  .work-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: clamp(32px, 5vw, 56px);
+  }
+  .work-note {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(242, 233, 225, 0.55);
+  }
+
+  /* Featured */
+  .featured {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    border: 1px solid rgba(242, 233, 225, 0.12);
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--fs-bg-2);
+    margin-bottom: 28px;
+  }
+  .featured-media { position: relative; min-height: 340px; display: block; }
+  .featured-body {
+    padding: clamp(28px, 4vw, 48px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .featured-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .featured-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(26px, 3vw, 36px);
+    letter-spacing: -0.02em;
+  }
+  .featured-title a { color: var(--fs-text); transition: color 0.2s ease; }
+  .featured-title a:hover { color: var(--fs-amber); }
+  .featured-more { align-self: flex-start; }
+  .featured-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: rgba(242, 233, 225, 0.78);
+  }
+  .featured-detail p { margin: 0; }
+  .detail-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fs-orange);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 28px;
+  }
+
+  .card {
+    border: 1px solid rgba(242, 233, 225, 0.12);
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--fs-bg-2);
+    display: flex;
+    flex-direction: column;
+    color: var(--fs-text);
+    transition: border-color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+  }
+  /* Touch devices fire :hover on tap and leave it stuck — gate lift behind a real pointer. */
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover { border-color: rgba(255, 122, 45, 0.5); transform: translateY(-3px); color: var(--fs-text); }
+  }
+
+  .card-media { position: relative; height: 260px; }
+
+  .card-body {
+    padding: 24px 26px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .card-title {
+    margin: 4px 0 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: -0.01em;
+  }
+  .card-summary {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: rgba(242, 233, 225, 0.65);
+  }
+  .card-more {
+    margin-top: 4px;
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+    color: var(--fs-amber);
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+  }
+  .card:hover .card-more { opacity: 1; }
+
+  /* CTA card */
+  .card--cta {
+    border-style: dashed;
+    border-color: rgba(242, 233, 225, 0.25);
+    background: transparent;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 14px;
+    padding: 32px;
+    min-height: 260px;
+  }
+  .card--cta:hover { transform: none; border-color: rgba(255, 122, 45, 0.5); }
+  .cta-eyebrow {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(242, 233, 225, 0.5);
+  }
+  .cta-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+</style>
