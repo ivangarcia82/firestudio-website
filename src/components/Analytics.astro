@@ -1,0 +1,113 @@
+---
+// Meta Pixel + GA4. Each tag loads only when its public env var is set, so
+// previews and local dev stay clean. Every event carries the page language so
+// campaign results can be split by market.
+//
+// Env: PUBLIC_META_PIXEL_ID, PUBLIC_GA4_ID
+import type { Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const pixelId = import.meta.env.PUBLIC_META_PIXEL_ID as string | undefined;
+const ga4Id = import.meta.env.PUBLIC_GA4_ID as string | undefined;
+---
+
+{/* Event bus. Defined even with no tags installed, so components can call it
+    unconditionally and clicks are never wired to a missing function. */}
+<script is:inline define:vars={{ lang, pixelId, ga4Id }}>
+  (function () {
+    var COOKIE_KEY = 'fs-consent';
+    var read = function () {
+      try {
+        return localStorage.getItem(COOKIE_KEY);
+      } catch (e) {
+        return null;
+      }
+    };
+
+    // Opt-out model: tags run unless the visitor explicitly rejected them.
+    window.fsConsentGranted = function () {
+      return read() !== 'rejected';
+    };
+
+    // Maps one intent to the event name each platform expects.
+    var MAP = {
+      lead: { meta: 'Lead', ga: 'generate_lead' },
+      contact: { meta: 'Contact', ga: 'contact' },
+      schedule: { meta: 'Schedule', ga: 'schedule' },
+    };
+
+    window.fsTrack = function (intent, params) {
+      var names = MAP[intent];
+      if (!names) return;
+      var payload = Object.assign({ language: lang }, params || {});
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', names.meta, payload);
+      }
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', names.ga, payload);
+      }
+    };
+
+    // Declarative tracking: any element with data-track="contact|schedule".
+    document.addEventListener('click', function (event) {
+      var target = event.target;
+      if (!target || typeof target.closest !== 'function') return;
+      var el = target.closest('[data-track]');
+      if (!el) return;
+      window.fsTrack(el.getAttribute('data-track'), {
+        placement: el.getAttribute('data-track-placement') || undefined,
+      });
+    });
+  })();
+</script>
+
+{
+  pixelId && (
+    <script is:inline define:vars={{ pixelId }}>
+      if (window.fsConsentGranted && window.fsConsentGranted()) {
+        !(function (f, b, e, v, n, t, s) {
+          if (f.fbq) return;
+          n = f.fbq = function () {
+            n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+          };
+          if (!f._fbq) f._fbq = n;
+          n.push = n;
+          n.loaded = !0;
+          n.version = '2.0';
+          n.queue = [];
+          t = b.createElement(e);
+          t.async = !0;
+          t.src = v;
+          s = b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t, s);
+        })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+        window.fbq('init', pixelId);
+        window.fbq('track', 'PageView');
+      }
+    </script>
+  )
+}
+
+{
+  ga4Id && (
+    <script is:inline define:vars={{ ga4Id, lang }}>
+      if (window.fsConsentGranted && window.fsConsentGranted()) {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4Id;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () {
+          window.dataLayer.push(arguments);
+        };
+        window.gtag('js', new Date());
+        window.gtag('config', ga4Id, { language: lang });
+      }
+    </script>
+  )
+}

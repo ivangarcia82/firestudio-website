@@ -1,0 +1,94 @@
+---
+import { useTranslations, privacyPath, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<div class="cookie" id="cookie-notice" hidden data-cookie-notice>
+  <p class="cookie-text">
+    {t.cookies.text}{' '}
+    <a href={privacyPath(lang)} class="cookie-more">{t.cookies.more}</a>
+  </p>
+  <div class="cookie-actions">
+    <button type="button" class="btn btn--sm" data-cookie-accept>{t.cookies.accept}</button>
+    <button type="button" class="btn btn--sm btn--ghost" data-cookie-reject>{t.cookies.reject}</button>
+  </div>
+</div>
+
+<style>
+  .cookie {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    z-index: 70;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 18px 20px;
+    border: 1px solid var(--fs-line);
+    border-radius: var(--radius);
+    background: var(--fs-bg);
+    box-shadow: 0 12px 40px rgba(14, 26, 58, 0.16);
+  }
+  .cookie[hidden] { display: none; }
+
+  .cookie-text {
+    margin: 0;
+    flex: 1 1 280px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--fs-ink-80);
+  }
+  .cookie-more { color: var(--fs-accent-ink); border-bottom: 1px solid var(--fs-accent); }
+
+  .cookie-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* Keep the WhatsApp FAB clear of the notice on narrow screens. */
+  @media (max-width: 560px) {
+    .cookie { bottom: 88px; }
+  }
+</style>
+
+<script>
+  const KEY = 'fs-consent';
+
+  function initCookieNotice() {
+    const notice = document.querySelector<HTMLElement>('[data-cookie-notice]');
+    if (!notice) return;
+
+    let stored: string | null = null;
+    try {
+      stored = localStorage.getItem(KEY);
+    } catch {
+      // Private mode / storage blocked: show the notice, remember nothing.
+    }
+    if (stored === 'accepted' || stored === 'rejected') return;
+
+    notice.hidden = false;
+
+    const close = (value: 'accepted' | 'rejected') => {
+      try {
+        localStorage.setItem(KEY, value);
+      } catch {
+        /* nothing to do — the choice just won't persist */
+      }
+      notice.hidden = true;
+    };
+
+    notice.querySelector('[data-cookie-accept]')?.addEventListener('click', () => close('accepted'));
+    notice.querySelector('[data-cookie-reject]')?.addEventListener('click', () => close('rejected'));
+  }
+
+  initCookieNotice();
+  document.addEventListener('astro:page-load', initCookieNotice);
+</script>

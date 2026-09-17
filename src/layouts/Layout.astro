@@ -1,19 +1,64 @@
 ---
 import '../styles/global.css';
+import Analytics from '../components/Analytics.astro';
+import CookieNotice from '../components/CookieNotice.astro';
+import { site, socialProfiles } from '../data/site';
+import {
+  useTranslations,
+  alternatesFor,
+  absoluteUrl,
+  HREFLANG,
+  OG_LOCALE,
+  otherLang,
+  type Lang,
+  type RouteKey,
+} from '../i18n';
 
 interface Props {
+  lang?: Lang;
   title?: string;
   description?: string;
+  /** Route id, when this page has a translated twin. Drives hreflang. */
+  routeKey?: RouteKey;
+  /** Keep a page out of the index (used by nothing today; here for drafts). */
+  noindex?: boolean;
 }
 
-const {
-  title = 'Fire Studio — Diseño y desarrollo web en Mérida',
-  description = 'Diseñamos y desarrollamos sitios web, tiendas en línea y aplicaciones a la medida. Estudio de desarrollo web en Mérida, Yucatán.',
-} = Astro.props;
+const { lang = 'es', title, description, routeKey, noindex = false } = Astro.props;
+
+const t = useTranslations(lang);
+const pageTitle = title ?? t.meta.title;
+const pageDescription = description ?? t.meta.description;
+
+// Canonical is always absolute and always includes the trailing slash Astro emits.
+const canonical = absoluteUrl(Astro.url.pathname, lang);
+const alternates = routeKey ? alternatesFor(routeKey) : [];
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': `${absoluteUrl('/', 'es')}#studio`,
+  name: site.name,
+  url: canonical,
+  email: site.email,
+  inLanguage: HREFLANG[lang],
+  description: pageDescription,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: site.city,
+    addressRegion: site.region,
+    addressCountry: site.countryCode,
+  },
+  areaServed: [
+    { '@type': 'Country', name: 'Mexico' },
+    { '@type': 'Country', name: 'United States' },
+  ],
+  sameAs: socialProfiles,
+};
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={HREFLANG[lang]}>
   <head>
     <meta charset="utf-8" />
     <!-- Mark JS as present before first paint so scroll-reveal has no FOUC and
@@ -23,25 +68,47 @@ const {
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content="Sitios web, tiendas en línea y aplicaciones a la medida. Cuéntanos tu proyecto." />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    {
+      alternates.map((alt) => (
+        <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+      ))
+    }
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="es_MX" />
-    <meta property="og:site_name" content="Fire Studio" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content={OG_LOCALE[lang]} />
+    <meta property="og:locale:alternate" content={OG_LOCALE[otherLang(lang)]} />
+    <meta name="twitter:card" content="summary_large_image" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Archivo variable: the width axis carries the identity (expanded
+         headings, condensed labels), so both wdth and wght are requested. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap"
       rel="stylesheet"
     />
+
     <meta name="generator" content={Astro.generator} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
+
+    <Analytics lang={lang} />
   </head>
   <body>
+    <a href="#main" class="skip-link">{t.nav.skipToContent}</a>
     <div class="page">
       <slot />
     </div>
+    <CookieNotice lang={lang} />
 
     <script>
       // Reveal-on-scroll. Elements marked [data-reveal] fade up once; the direct
