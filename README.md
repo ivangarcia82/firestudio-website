@@ -1,15 +1,16 @@
 # Fire Studio — sitio web
 
-Sitio de una página para **Fire Studio**, estudio de diseño y desarrollo web en Mérida, Yucatán.
-Construido con **Astro** (v7) a partir del diseño de Fire Studio, con los proyectos reales del
-portafolio y fotografía de stock.
+Sitio bilingüe de **Fire Studio**, estudio de desarrollo Shopify en Mérida, Yucatán.
+Español en `/` e inglés en `/en/`. Construido con **Astro** (v7) y desplegado en Vercel.
 
 ## Stack
 
-- [Astro](https://astro.build) — sitio estático, componentes `.astro`
+- [Astro](https://astro.build) — estático, con una sola ruta bajo demanda (`/api/audit`)
+- `@astrojs/vercel` (adapter) y `@astrojs/sitemap` (sitemap con alternates de idioma)
+- Enrutamiento i18n nativo de Astro: `defaultLocale: 'es'` sin prefijo, `en` con prefijo
 - Optimización de imágenes con `astro:assets` (WebP responsivo)
-- Fuentes: Bricolage Grotesque · Instrument Sans · Space Mono (Google Fonts)
-- Sin dependencias de framework de UI; el formulario de contacto usa JS vanilla
+- Tipografía: Archivo variable (eje de ancho: expandida en títulos, condensada en etiquetas)
+- Sin framework de UI; el formulario de auditoría es JS vanilla
 
 ## Comandos
 
@@ -17,50 +18,74 @@ portafolio y fotografía de stock.
 | :---------------- | :-------------------------------------------------- |
 | `npm install`     | Instala dependencias                                |
 | `npm run dev`     | Servidor de desarrollo en `localhost:4321`          |
-| `npm run build`   | Compila el sitio de producción a `./dist/`          |
+| `npm run build`   | Compila el sitio de producción                      |
 | `npm run preview` | Sirve el build localmente para revisarlo            |
+
+Para dejar el servidor de desarrollo en segundo plano: `astro dev --background`
+(se administra con `astro dev stop`, `astro dev status` y `astro dev logs`).
+
+## Variables de entorno
+
+Copia `.env.example` a `.env` y replica los valores en Vercel. Ninguna es obligatoria:
+cada función se apaga sola si su variable falta.
+
+| Variable                     | Para qué sirve                                             |
+| :--------------------------- | :--------------------------------------------------------- |
+| `HUBSPOT_PRIVATE_APP_TOKEN`  | `/api/audit` crea o actualiza el contacto en HubSpot. Sin ella, el formulario ofrece enviar los datos por WhatsApp. |
+| `PUBLIC_META_PIXEL_ID`       | Carga el Meta Pixel. Vacía, no se carga.                    |
+| `PUBLIC_GA4_ID`              | Carga GA4. Vacía, no se carga.                              |
 
 ## Estructura
 
 ```
 src/
-├─ assets/
-│  ├─ projects/         # capturas reales de cada tienda + foto del estudio
-│  └─ blog/             # portadas de las entradas del blog
-├─ components/          # Nav, Hero, Work, Services, Process, Testimonials,
-│                       # About, Blog, Contact, Footer, WhatsAppFab
-├─ content/blog/        # entradas del blog (Markdown + frontmatter)
-├─ content.config.ts    # esquema de la colección de blog (astro:content)
+├─ assets/               # capturas de cada proyecto + portadas del blog
+├─ components/           # Nav, Hero, BrandStrip, Work, Testimonials, Services,
+│                        # Bilingual, AuditForm, Process, Packages, About, Faq,
+│                        # FinalCta, Blog, Footer, WhatsAppFab, Analytics,
+│                        # CookieNotice, LegalArticle
+├─ content/blog/         # entradas del blog (Markdown + frontmatter)
 ├─ data/
-│  ├─ projects.ts       # los 6 proyectos (ivang.mx/work) + caso destacado
-│  └─ site.ts           # WhatsApp, email, redes y helper de wa.me
-├─ lib/blog.ts          # orden y formato de fechas de las entradas
-├─ layouts/Layout.astro # <head>, fuentes, metadatos
-├─ styles/global.css    # tokens de diseño y primitivas compartidas
+│  ├─ projects.ts        # los 6 proyectos, en español
+│  ├─ site.ts            # correo, WhatsApp, redes (con los TODO pendientes)
+│  └─ pending.ts         # precios y promesas por confirmar — nulos = no se pintan
+├─ i18n/
+│  ├─ config.mjs         # locales, orígenes por idioma y rutas traducidas
+│  ├─ index.ts           # helpers (useTranslations, sectionHref, waHref…)
+│  ├─ es.ts / en.ts      # todo el copy; `en` está tipado contra `es`
+│  └─ projects.ts        # copy en inglés del portafolio
+├─ lib/
+│  ├─ audit.ts           # validación compartida cliente/servidor del formulario
+│  └─ blog.ts            # orden y formato de fechas
+├─ layouts/Layout.astro  # canonical, hreflang, Open Graph, JSON-LD, analítica
+├─ styles/global.css     # tokens de diseño y primitivas compartidas
 └─ pages/
-   ├─ index.astro       # landing
-   ├─ work/[slug].astro # página de detalle por proyecto (caso de estudio)
-   └─ blog/
-      ├─ index.astro    # listado del blog
-      └─ [slug].astro   # entrada individual
+   ├─ index.astro            # home en español
+   ├─ en/index.astro         # home en inglés
+   ├─ aviso-de-privacidad.astro · terminos.astro
+   ├─ en/privacy.astro · en/terms.astro
+   ├─ api/audit.ts           # función serverless del formulario
+   ├─ work/[slug].astro      # casos de estudio (solo en español)
+   └─ blog/                  # listado y entradas (solo en español)
 ```
 
-## Páginas generadas
+## Idiomas
 
-- `/` — landing
-- `/work/<slug>` — un caso de estudio por proyecto (reto, solución, resultado, tecnologías,
-  enlace al sitio en vivo y proyectos relacionados)
-- `/blog` — listado de entradas
-- `/blog/<slug>` — cada artículo
+- El español vive en la raíz y el inglés bajo `/en/`.
+- `src/i18n/config.mjs` define las **rutas traducidas** por id (`home`, `privacy`,
+  `terms`, `blog`). Una ruta con un solo idioma no lleva alternates de hreflang.
+- Cada idioma tiene su **origen propio** en `ORIGINS`, para que el inglés pueda
+  mudarse a un dominio genérico sin tocar componentes.
+- `en.ts` está tipado con `Dictionary` (derivado de `es.ts`): si falta una clave,
+  el build falla en vez de caer en silencio al español.
 
 ## Contenido
 
-- **Proyectos** (`src/data/projects.ts`): Sandra Weil (destacado), Sognare, Pure Over,
-  CEMEX Supply, Mi Tienda Socio y Terrakan Residencial — tomados de
-  [ivang.mx/work](https://ivang.mx/work). Cada imagen es una **captura real** de la tienda en
-  vivo. Para cambiarla, reemplaza el archivo en `src/assets/projects/`.
-- **Blog** (`src/content/blog/*.md`): para agregar una entrada, crea un `.md` con el frontmatter
-  (`title`, `description`, `category`, `readingTime`, `date`, `cover`, `coverAlt`) y su portada en
-  `src/assets/blog/`. Aparece sola en el home, el listado y con su propia página.
-- **Datos de contacto** (`src/data/site.ts`): actualiza `whatsappNumber`, `email` y las
-  redes sociales en un solo lugar.
+- **Proyectos** (`src/data/projects.ts`): el copy en inglés está en
+  `src/i18n/projects.ts`. Los casos de estudio siguen siendo solo en español y los
+  enlaces en inglés lo dicen ("Case study (in Spanish)").
+- **Blog** (`src/content/blog/*.md`): solo en español. En `/en/` el enlace dice
+  "Blog (in Spanish)".
+- **Pendientes de Ivan** (`src/data/pending.ts`): precios de Launch, Growth, Scale
+  y del plan mensual, más los tiempos de entrega y el soporte. Mientras estén en
+  `null` no se pinta nada; llena el valor y la UI aparece sola.
