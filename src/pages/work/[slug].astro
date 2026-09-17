@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import Nav from '../../components/Nav.astro';
-import Contact from '../../components/Contact.astro';
+import FinalCta from '../../components/FinalCta.astro';
 import Footer from '../../components/Footer.astro';
 import WhatsAppFab from '../../components/WhatsAppFab.astro';
 import { projects } from '../../data/projects';
@@ -12,6 +12,7 @@ export function getStaticPaths() {
   return projects.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
 }
 
+const lang = 'es' as const;
 const { project } = Astro.props;
 const related = projects.filter((p) => p.slug !== project.slug).slice(0, 3);
 const wa = waLink(`Hola, vi el caso de ${project.name} y quiero algo así para mi negocio.`);
@@ -19,23 +20,24 @@ const host = new URL(project.liveUrl).hostname.replace(/^www\./, '');
 ---
 
 <Layout
+  lang={lang}
   title={`${project.name} — Caso de estudio · Fire Studio`}
   description={project.summary}
 >
-  <Nav />
+  <Nav lang={lang} />
 
   <article class="case">
     <header class="case-hero">
-      <a href="/#trabajo" class="back mono">← Trabajo</a>
+      <a href="/#trabajo" class="back label">← Trabajo</a>
       <div class="case-tags">
-        <span class={`chip chip--${project.tone}`}>{project.category}</span>
-        <span class="mono case-year">{project.year}</span>
+        <span class="chip">{project.category}</span>
+        <span class="label case-year">{project.year}</span>
       </div>
       <h1 class="case-title">{project.name}</h1>
       <p class="case-tagline">{project.tagline}</p>
       <p class="case-overview">{project.overview}</p>
       <div class="case-actions">
-        <a href={project.liveUrl} target="_blank" rel="noopener" class="btn-fire">Visitar sitio ↗</a>
+        <a href={project.liveUrl} target="_blank" rel="noopener" class="btn">Visitar sitio ↗</a>
         <a href={wa} target="_blank" rel="noopener" class="link-underline">Quiero algo así →</a>
       </div>
     </header>
@@ -47,32 +49,32 @@ const host = new URL(project.liveUrl).hostname.replace(/^www\./, '');
     <div class="case-body">
       <div class="case-detail">
         <section class="phase">
-          <p class="phase-label mono">El reto</p>
+          <p class="phase-label label">El reto</p>
           <p class="phase-text">{project.reto}</p>
         </section>
         <section class="phase">
-          <p class="phase-label mono">La solución</p>
+          <p class="phase-label label">La solución</p>
           <p class="phase-text">{project.solucion}</p>
         </section>
         <section class="phase">
-          <p class="phase-label mono">El resultado</p>
+          <p class="phase-label label">El resultado</p>
           <p class="phase-text">{project.resultado}</p>
         </section>
       </div>
 
       <aside class="case-meta">
         <div class="meta-block">
-          <p class="meta-label mono">Tecnologías</p>
+          <p class="meta-label label">Tecnologías</p>
           <ul class="tech-list">
             {project.tech.map((t) => <li>{t}</li>)}
           </ul>
         </div>
         <div class="meta-block">
-          <p class="meta-label mono">Año</p>
+          <p class="meta-label label">Año</p>
           <p class="meta-val">{project.year}</p>
         </div>
         <div class="meta-block">
-          <p class="meta-label mono">Sitio</p>
+          <p class="meta-label label">Sitio</p>
           <a href={project.liveUrl} target="_blank" rel="noopener" class="meta-link">{host} ↗</a>
         </div>
       </aside>
@@ -81,7 +83,7 @@ const host = new URL(project.liveUrl).hostname.replace(/^www\./, '');
     <section class="related">
       <div class="related-head">
         <h2 class="section-title">Más proyectos</h2>
-        <a href="/#trabajo" class="link-underline link-underline--amber">Ver todo el trabajo →</a>
+        <a href="/#trabajo" class="link-underline">Ver todo el trabajo →</a>
       </div>
       <div class="related-grid" data-reveal-group>
         {
@@ -91,7 +93,7 @@ const host = new URL(project.liveUrl).hostname.replace(/^www\./, '');
                 <Image src={p.image} alt={p.alt} widths={[320, 560]} sizes="(max-width: 760px) 100vw, 33vw" class="media-cover" />
               </div>
               <div class="rel-body">
-                <span class={`chip chip--${p.tone}`}>{p.category}</span>
+                <span class="chip">{p.category}</span>
                 <h3 class="rel-title">{p.name}</h3>
               </div>
             </a>
@@ -101,13 +103,13 @@ const host = new URL(project.liveUrl).hostname.replace(/^www\./, '');
     </section>
   </article>
 
-  <Contact />
-  <Footer />
-  <WhatsAppFab />
+  <FinalCta lang={lang} />
+  <Footer lang={lang} />
+  <WhatsAppFab lang={lang} />
 </Layout>
 
 <style>
-  .case { border-top: 1px solid rgba(242, 233, 225, 0.08); }
+  .case { border-top: 1px solid var(--fs-line-soft); }
 
   .case-hero {
     max-width: 900px;
@@ -120,16 +122,17 @@ const host = new URL(project.liveUrl).hostname.replace(/^www\./, '');
   .back {
     align-self: flex-start;
     font-size: 13px;
-    color: rgba(242, 233, 225, 0.7);
+    color: var(--fs-ink-65);
     transition: color 0.2s ease;
   }
-  .back:hover { color: var(--fs-amber); }
+  .back:hover { color: var(--fs-accent-ink); }
   .case-tags { display: flex; align-items: center; gap: 12px; }
-  .case-year { font-size: 13px; color: rgba(242, 233, 225, 0.5); }
+  .case-year { font-size: 13px; color: var(--fs-ink-50); }
   .case-title {
     margin: 0;
     font-family: var(--font-display);
-    font-weight: 800;
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
     font-size: clamp(38px, 6.5vw, 76px);
     line-height: 1.02;
     letter-spacing: -0.03em;
@@ -137,17 +140,17 @@ const host = new URL(project.liveUrl).hostname.replace(/^www\./, '');
   }
   .case-tagline {
     margin: 0;
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 14px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--fs-orange);
+    color: var(--fs-accent-ink);
   }
   .case-overview {
     margin: 8px 0 0;
     font-size: clamp(17px, 2vw, 20px);
     line-height: 1.6;
-    color: rgba(242, 233, 225, 0.8);
+    color: var(--fs-ink-80);
     text-wrap: pretty;
   }
   .case-actions {
@@ -167,7 +170,7 @@ const host = new URL(project.liveUrl).hostname.replace(/^www\./, '');
     width: 100%;
     height: auto;
     border-radius: 20px;
-    border: 1px solid rgba(242, 233, 225, 0.12);
+    border: 1px solid var(--fs-line);
     display: block;
   }
 
@@ -184,13 +187,13 @@ const host = new URL(project.liveUrl).hostname.replace(/^www\./, '');
   }
 
   .case-detail { display: flex; flex-direction: column; gap: 36px; }
-  .phase { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid rgba(242, 233, 225, 0.12); padding-top: 24px; }
-  .phase-label { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fs-orange); }
+  .phase { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--fs-line); padding-top: 24px; }
+  .phase-label { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fs-accent-ink); }
   .phase-text {
     margin: 0;
     font-size: clamp(16px, 1.6vw, 18px);
     line-height: 1.6;
-    color: rgba(242, 233, 225, 0.82);
+    color: var(--fs-ink-80);
   }
 
   .case-meta {
@@ -198,23 +201,23 @@ const host = new URL(project.liveUrl).hostname.replace(/^www\./, '');
     flex-direction: column;
     gap: 24px;
     padding: 26px 28px;
-    border: 1px solid rgba(242, 233, 225, 0.12);
+    border: 1px solid var(--fs-line);
     border-radius: 16px;
-    background: var(--fs-bg-2);
+    background: var(--fs-surface);
   }
   .meta-block { display: flex; flex-direction: column; gap: 8px; }
-  .meta-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(242, 233, 225, 0.5); }
+  .meta-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fs-ink-50); }
   .meta-val { margin: 0; font-size: 15px; }
-  .meta-link { font-size: 15px; color: var(--fs-amber); }
-  .meta-link:hover { color: var(--fs-orange); }
+  .meta-link { font-size: 15px; color: var(--fs-accent-ink); }
+  .meta-link:hover { color: var(--fs-accent-ink); }
   .tech-list { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
   .tech-list li {
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 12px;
     padding: 5px 11px;
     border-radius: 999px;
-    border: 1px solid rgba(242, 233, 225, 0.2);
-    color: rgba(242, 233, 225, 0.75);
+    border: 1px solid var(--fs-line);
+    color: var(--fs-ink-80);
   }
 
   /* Related */
@@ -238,21 +241,22 @@ const host = new URL(project.liveUrl).hostname.replace(/^www\./, '');
     gap: 24px;
   }
   .rel-card {
-    border: 1px solid rgba(242, 233, 225, 0.12);
+    border: 1px solid var(--fs-line);
     border-radius: 18px;
     overflow: hidden;
-    background: var(--fs-bg-2);
-    color: var(--fs-text);
+    background: var(--fs-surface);
+    color: var(--fs-ink);
     display: flex;
     flex-direction: column;
     transition: border-color 0.2s ease, transform 0.2s ease;
   }
-  .rel-card:hover { border-color: rgba(255, 122, 45, 0.5); transform: translateY(-3px); color: var(--fs-text); }
+  .rel-card:hover { border-color: var(--fs-accent); transform: translateY(-3px); color: var(--fs-ink); }
   .rel-media { position: relative; height: 180px; }
   .rel-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 10px; }
   .rel-title {
     margin: 0;
     font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
     font-weight: 700;
     font-size: 20px;
     letter-spacing: -0.01em;

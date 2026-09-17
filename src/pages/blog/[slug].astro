@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Nav from '../../components/Nav.astro';
-import Contact from '../../components/Contact.astro';
+import FinalCta from '../../components/FinalCta.astro';
 import Footer from '../../components/Footer.astro';
 import WhatsAppFab from '../../components/WhatsAppFab.astro';
 import { getSortedPosts, formatDate } from '../../lib/blog';
@@ -16,20 +16,21 @@ export async function getStaticPaths() {
   });
 }
 
+const lang = 'es' as const;
 const { post, related } = Astro.props;
 const { Content } = await render(post);
 const { data } = post;
 ---
 
-<Layout title={`${data.title} · Fire Studio`} description={data.description}>
-  <Nav />
+<Layout lang={lang} title={`${data.title} · Fire Studio`} description={data.description}>
+  <Nav lang={lang} />
 
   <article class="post">
     <header class="post-hero">
-      <a href="/blog" class="back mono">← Blog</a>
+      <a href="/blog" class="back label">← Blog</a>
       <div class="post-tags">
-        <span class="chip chip--amber">{data.category}</span>
-        <span class="mono post-hero-meta">{formatDate(data.date)} · {data.readingTime}</span>
+        <span class="chip">{data.category}</span>
+        <span class="label post-hero-meta">{formatDate(data.date)} · {data.readingTime}</span>
       </div>
       <h1 class="post-h1">{data.title}</h1>
       <p class="post-lead">{data.description}</p>
@@ -56,9 +57,9 @@ const { data } = post;
                   <Image src={p.data.cover} alt={p.data.coverAlt} class="media-cover" widths={[320, 560]} sizes="(max-width: 760px) 100vw, 50vw" />
                 </div>
                 <div class="more-body">
-                  <span class="chip chip--amber">{p.data.category}</span>
+                  <span class="chip">{p.data.category}</span>
                   <h3 class="more-card-title">{p.data.title}</h3>
-                  <p class="more-meta mono">{formatDate(p.data.date)} · {p.data.readingTime}</p>
+                  <p class="more-meta label">{formatDate(p.data.date)} · {p.data.readingTime}</p>
                 </div>
               </a>
             ))}
@@ -68,13 +69,13 @@ const { data } = post;
     )
   }
 
-  <Contact />
-  <Footer />
-  <WhatsAppFab />
+  <FinalCta lang={lang} />
+  <Footer lang={lang} />
+  <WhatsAppFab lang={lang} />
 </Layout>
 
 <style>
-  .post { border-top: 1px solid rgba(242, 233, 225, 0.08); }
+  .post { border-top: 1px solid var(--fs-line-soft); }
 
   .post-hero {
     max-width: 760px;
@@ -87,16 +88,17 @@ const { data } = post;
   .back {
     align-self: flex-start;
     font-size: 13px;
-    color: rgba(242, 233, 225, 0.7);
+    color: var(--fs-ink-65);
     transition: color 0.2s ease;
   }
-  .back:hover { color: var(--fs-amber); }
+  .back:hover { color: var(--fs-accent-ink); }
   .post-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-  .post-hero-meta { font-size: 12.5px; color: rgba(242, 233, 225, 0.5); }
+  .post-hero-meta { font-size: 12.5px; color: var(--fs-ink-50); }
   .post-h1 {
     margin: 0;
     font-family: var(--font-display);
-    font-weight: 800;
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
     font-size: clamp(32px, 5.5vw, 60px);
     line-height: 1.05;
     letter-spacing: -0.03em;
@@ -106,7 +108,7 @@ const { data } = post;
     margin: 0;
     font-size: clamp(17px, 2vw, 20px);
     line-height: 1.6;
-    color: rgba(242, 233, 225, 0.78);
+    color: var(--fs-ink-80);
     text-wrap: pretty;
   }
 
@@ -119,7 +121,7 @@ const { data } = post;
     width: 100%;
     height: auto;
     border-radius: 20px;
-    border: 1px solid rgba(242, 233, 225, 0.12);
+    border: 1px solid var(--fs-line);
     display: block;
   }
 
@@ -130,51 +132,54 @@ const { data } = post;
     padding: clamp(36px, 5vw, 60px) clamp(20px, 5vw, 56px) clamp(48px, 7vw, 80px);
     font-size: clamp(16px, 1.7vw, 18px);
     line-height: 1.7;
-    color: rgba(242, 233, 225, 0.85);
+    color: var(--fs-ink-80);
   }
   .prose :global(h2) {
     font-family: var(--font-display);
-    font-weight: 800;
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
     font-size: clamp(24px, 3vw, 32px);
     letter-spacing: -0.02em;
     line-height: 1.15;
     margin: 2em 0 0.6em;
-    color: var(--fs-text);
+    color: var(--fs-ink);
     text-wrap: balance;
   }
   .prose :global(h3) {
     font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
     font-weight: 700;
     font-size: clamp(19px, 2.2vw, 23px);
     letter-spacing: -0.01em;
     margin: 1.6em 0 0.5em;
-    color: var(--fs-text);
+    color: var(--fs-ink);
   }
   .prose :global(p) { margin: 0 0 1.2em; }
-  .prose :global(a) { color: var(--fs-amber); border-bottom: 1px solid rgba(255, 194, 74, 0.35); }
-  .prose :global(a:hover) { color: var(--fs-orange); border-bottom-color: var(--fs-orange); }
-  .prose :global(strong) { color: var(--fs-text); font-weight: 600; }
+  .prose :global(a) { color: var(--fs-accent-ink); border-bottom: 1px solid var(--fs-line); }
+  .prose :global(a:hover) { color: var(--fs-accent-ink); border-bottom-color: var(--fs-accent-ink); }
+  .prose :global(strong) { color: var(--fs-ink); font-weight: 600; }
   .prose :global(ul),
   .prose :global(ol) { margin: 0 0 1.4em; padding-left: 1.2em; display: flex; flex-direction: column; gap: 0.5em; }
   .prose :global(li) { padding-left: 0.3em; }
-  .prose :global(li::marker) { color: var(--fs-orange); }
+  .prose :global(li::marker) { color: var(--fs-accent-ink); }
   .prose :global(blockquote) {
     margin: 1.6em 0;
     padding: 4px 0 4px 22px;
-    border-left: 3px solid var(--fs-orange);
+    border-left: 3px solid var(--fs-accent-ink);
     font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
     font-weight: 700;
     font-size: clamp(19px, 2.2vw, 24px);
     line-height: 1.35;
-    color: var(--fs-text);
+    color: var(--fs-ink);
     text-wrap: balance;
   }
   .prose :global(blockquote p) { margin: 0; }
 
   /* Related */
   .more {
-    border-top: 1px solid rgba(242, 233, 225, 0.08);
-    background: var(--fs-bg-2);
+    border-top: 1px solid var(--fs-line-soft);
+    background: var(--fs-surface);
     padding: clamp(48px, 7vw, 80px) clamp(20px, 5vw, 56px);
   }
   .more-inner { max-width: 1100px; margin: 0 auto; }
@@ -183,24 +188,25 @@ const { data } = post;
   .more-card {
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(242, 233, 225, 0.12);
+    border: 1px solid var(--fs-line);
     border-radius: 18px;
     overflow: hidden;
     background: var(--fs-bg);
-    color: var(--fs-text);
+    color: var(--fs-ink);
     transition: border-color 0.2s ease, transform 0.2s ease;
   }
-  .more-card:hover { border-color: rgba(255, 122, 45, 0.5); transform: translateY(-3px); color: var(--fs-text); }
+  .more-card:hover { border-color: var(--fs-accent); transform: translateY(-3px); color: var(--fs-ink); }
   .more-media { position: relative; height: 170px; }
   .more-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 10px; }
   .more-card-title {
     margin: 0;
     font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
     font-weight: 700;
     font-size: 19px;
     line-height: 1.2;
     letter-spacing: -0.01em;
     text-wrap: balance;
   }
-  .more-meta { font-size: 12px; color: rgba(242, 233, 225, 0.5); }
+  .more-meta { font-size: 12px; color: var(--fs-ink-50); }
 </style>
