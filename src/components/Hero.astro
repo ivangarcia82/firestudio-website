@@ -1,73 +1,85 @@
 ---
-import { waHref } from '../data/site';
+import { useTranslations, sectionHref, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const { heatmap } = t.hero;
 ---
 
-<header id="inicio" class="hero">
-  <div class="hero-glow" aria-hidden="true"></div>
+<header id={t.ids.top} class="hero">
   <div class="hero-inner">
-    <p class="eyebrow">Estudio de desarrollo web · Mérida, Yucatán</p>
-    <h1 class="hero-title">
-      Tu negocio merece un sitio que{' '}
-      <span class="gradient-text">no se parezca a ningún otro</span>.
-    </h1>
-    <p class="hero-lead">
-      Diseñamos y desarrollamos sitios web, tiendas en línea y aplicaciones que hacen crecer
-      negocios. Hablas directo con quienes construyen tu proyecto.
-    </p>
-    <div class="hero-actions">
-      <a href={waHref} target="_blank" rel="noopener" class="btn-fire">Cuéntanos tu proyecto</a>
-      <a href="#trabajo" class="link-underline">Ver trabajo ↓</a>
+    <div class="hero-copy">
+      <p class="eyebrow">{t.hero.eyebrow}</p>
+      <h1 class="hero-title">{t.hero.title}</h1>
+      <p class="hero-lead">{t.hero.lead}</p>
+      <div class="hero-actions">
+        <a href={sectionHref(lang, 'audit')} class="btn">{t.hero.ctaPrimary}</a>
+        <a href={sectionHref(lang, 'work')} class="link-underline">{t.hero.ctaSecondary} ↓</a>
+      </div>
     </div>
+
+    <figure class="heat" role="img" aria-label={heatmap.alt}>
+      <figcaption class="heat-caption label">{heatmap.caption}</figcaption>
+      <ul class="heat-rows">
+        {
+          heatmap.rows.map((row) => (
+            <li class="heat-row">
+              <span class="heat-label label">{row.label}</span>
+              <span class="heat-track">
+                <span class={`heat-fill heat-fill--${row.heat}`} />
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="heat-legend">
+        <span class="label">{heatmap.legendLow}</span>
+        <span class="heat-scale" aria-hidden="true"></span>
+        <span class="label">{heatmap.legendHigh}</span>
+      </div>
+    </figure>
   </div>
 </header>
 
 <style>
   .hero {
-    position: relative;
-    padding: clamp(72px, 12vw, 150px) clamp(20px, 5vw, 56px) clamp(80px, 10vw, 140px);
-    overflow: hidden;
-  }
-
-  .hero-glow {
-    position: absolute;
-    bottom: -35%;
-    left: -10%;
-    width: 75%;
-    height: 80%;
-    background: radial-gradient(
-      ellipse at center,
-      rgba(226, 59, 30, 0.32) 0%,
-      rgba(255, 122, 45, 0.14) 45%,
-      transparent 70%
-    );
-    filter: blur(40px);
-    animation: heatDrift 14s ease-in-out infinite;
-    pointer-events: none;
+    padding: clamp(48px, 8vw, 96px) clamp(20px, 5vw, 56px) clamp(56px, 8vw, 104px);
   }
 
   .hero-inner {
-    position: relative;
-    max-width: 1100px;
+    max-width: 1160px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
   }
 
-  .eyebrow { margin-bottom: 28px; }
+  .hero-copy { display: flex; flex-direction: column; align-items: flex-start; }
+
+  .eyebrow { margin-bottom: 24px; }
 
   .hero-title {
-    margin: 0 0 28px;
+    margin: 0 0 24px;
     font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(40px, 7.5vw, 96px);
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
+    font-size: clamp(38px, 5.6vw, 72px);
     line-height: 1.02;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.025em;
     text-wrap: balance;
   }
 
   .hero-lead {
-    margin: 0 0 40px;
-    max-width: 560px;
-    font-size: clamp(17px, 2vw, 20px);
+    margin: 0 0 36px;
+    max-width: 56ch;
+    font-size: clamp(17px, 1.6vw, 19px);
     line-height: 1.55;
-    color: rgba(242, 233, 225, 0.75);
+    color: var(--fs-ink-65);
     text-wrap: pretty;
   }
 
@@ -75,6 +87,81 @@ import { waHref } from '../data/site';
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 20px;
+    gap: 20px 24px;
+  }
+
+  /* ---- heat map ---- */
+  .heat {
+    margin: 0;
+    padding: clamp(22px, 3vw, 30px);
+    border: 1px solid var(--fs-line);
+    border-radius: var(--radius-lg);
+    background: var(--fs-surface);
+  }
+
+  .heat-caption {
+    font-size: 11.5px;
+    color: var(--fs-ink-50);
+    margin-bottom: 20px;
+    letter-spacing: 0.12em;
+  }
+
+  .heat-rows {
+    list-style: none;
+    margin: 0 0 22px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .heat-row {
+    display: grid;
+    grid-template-columns: minmax(80px, 34%) 1fr;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .heat-label {
+    font-size: 11px;
+    color: var(--fs-ink-65);
+    letter-spacing: 0.08em;
+  }
+
+  .heat-track {
+    height: 22px;
+    border-radius: 5px;
+    background: rgba(14, 26, 58, 0.07);
+    overflow: hidden;
+  }
+
+  .heat-fill {
+    display: block;
+    height: 100%;
+    border-radius: 5px;
+  }
+  /* Thermal scale — heat map only. */
+  .heat-fill--5 { width: 100%; background: var(--fs-heat-5); }
+  .heat-fill--4 { width: 82%;  background: var(--fs-heat-4); }
+  .heat-fill--3 { width: 64%;  background: var(--fs-heat-3); }
+  .heat-fill--2 { width: 46%;  background: var(--fs-heat-2); }
+  .heat-fill--1 { width: 28%;  background: var(--fs-heat-1); }
+
+  .heat-legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10.5px;
+    color: var(--fs-ink-50);
+  }
+  .heat-scale {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--fs-heat-scale);
+  }
+
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; }
   }
 </style>

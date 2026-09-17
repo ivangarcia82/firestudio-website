@@ -1,28 +1,66 @@
 ---
-import { waHref } from '../data/site';
+import {
+  useTranslations,
+  sectionHref,
+  homePath,
+  routePath,
+  otherLang,
+  bookingHref,
+  type Lang,
+  type RouteKey,
+} from '../i18n';
 
-const links = [
-  { href: '/#trabajo', label: 'Trabajo' },
-  { href: '/#servicios', label: 'Servicios' },
-  { href: '/#proceso', label: 'Proceso' },
-  { href: '/#nosotros', label: 'Nosotros' },
-  { href: '/blog', label: 'Blog' },
-];
+interface Props {
+  lang: Lang;
+  /** Route id of the current page, so the switcher lands on its twin. */
+  routeKey?: RouteKey;
+}
+
+const { lang, routeKey = 'home' } = Astro.props;
+const t = useTranslations(lang);
+
+const other = otherLang(lang);
+// Pages without a translated twin (blog, case studies) send the switcher home.
+const switchHref = routePath(routeKey, other) ?? homePath(other);
+const booking = bookingHref(lang);
 ---
 
-<nav class="nav">
-  <a href="/" class="brand">
+<nav class="nav" aria-label={t.nav.menu}>
+  <a href={homePath(lang)} class="brand" aria-label={`${t.nav.home} — Fire Studio`}>
     <span class="brand-mark" aria-hidden="true"></span>
     <span class="brand-name">Fire Studio</span>
   </a>
 
   <div class="nav-links" data-desktop-only="true">
-    {links.map((l) => <a href={l.href} class="nav-link">{l.label}</a>)}
+    {t.nav.links.map((l) => <a href={sectionHref(lang, l.id)} class="nav-link">{l.label}</a>)}
   </div>
 
-  <a href={waHref} target="_blank" rel="noopener" class="btn-fire btn-fire--sm nav-cta">
-    Cuéntanos tu proyecto
-  </a>
+  <div class="nav-end">
+    <div class="lang" role="group" aria-label={t.nav.langSwitchLabel}>
+      <span class="lang-current" aria-current="true">{lang.toUpperCase()}</span>
+      <a href={switchHref} class="lang-other" hreflang={other} title={t.nav.langSwitchTo}>
+        {other.toUpperCase()}
+      </a>
+    </div>
+
+    <a
+      href={booking}
+      target={booking.startsWith('http') ? '_blank' : null}
+      rel={booking.startsWith('http') ? 'noopener' : null}
+      class="btn btn--sm nav-cta"
+      data-track="schedule"
+      data-track-placement="nav"
+    >
+      {t.nav.cta}
+    </a>
+  </div>
+
+  <details class="nav-mobile">
+    <summary aria-label={t.nav.menu}><span aria-hidden="true"></span></summary>
+    <div class="nav-mobile-panel">
+      {t.nav.links.map((l) => <a href={sectionHref(lang, l.id)} class="nav-link">{l.label}</a>)}
+    </div>
+  </details>
 </nav>
 
 <style>
@@ -34,51 +72,119 @@ const links = [
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 14px clamp(20px, 5vw, 56px);
-    background: rgba(23, 16, 15, 0.82);
+    padding: 12px clamp(20px, 5vw, 56px);
+    background: rgba(244, 246, 245, 0.88);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(242, 233, 225, 0.08);
+    border-bottom: 1px solid var(--fs-line);
   }
 
   .brand {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: var(--fs-text);
+    color: var(--fs-ink);
   }
-  .brand:hover { color: var(--fs-text); }
+  .brand:hover { color: var(--fs-ink); }
 
   .brand-mark {
     display: inline-block;
     width: 18px;
     height: 18px;
-    background: linear-gradient(160deg, #ffc24a 0%, #ff7a2d 45%, #e23b1e 100%);
+    background: linear-gradient(160deg, #ffc24a 0%, var(--fs-accent) 45%, #d8402a 100%);
     border-radius: 0 50% 50% 50%;
     transform: rotate(-45deg);
   }
 
   .brand-name {
     font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 18px;
-    letter-spacing: -0.02em;
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.01em;
   }
 
   .nav-links {
     display: flex;
     align-items: center;
-    gap: 28px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    gap: 26px;
   }
 
   .nav-link {
-    color: rgba(242, 233, 225, 0.7);
+    font-family: var(--font-label);
+    font-stretch: var(--wdth-condensed);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fs-ink-65);
     transition: color 0.2s ease;
   }
-  .nav-link:hover { color: var(--fs-amber); }
+  .nav-link:hover { color: var(--fs-ink); }
+
+  .nav-end { display: flex; align-items: center; gap: 14px; }
+
+  .lang {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px;
+    border: 1px solid var(--fs-line);
+    border-radius: 999px;
+    font-family: var(--font-label);
+    font-stretch: var(--wdth-condensed);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+  .lang-current,
+  .lang-other {
+    padding: 4px 9px;
+    border-radius: 999px;
+    line-height: 1;
+  }
+  .lang-current { background: var(--fs-ink); color: var(--fs-on-ink); }
+  .lang-other { color: var(--fs-ink-65); }
+  .lang-other:hover { color: var(--fs-ink); background: var(--fs-surface); }
 
   .nav-cta { flex-shrink: 0; }
+
+  /* Mobile disclosure menu — no JS, closes on navigation. */
+  .nav-mobile { display: none; position: relative; }
+  .nav-mobile summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--fs-line);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .nav-mobile summary::-webkit-details-marker { display: none; }
+  .nav-mobile summary span {
+    width: 16px;
+    height: 2px;
+    background: var(--fs-ink);
+    box-shadow: 0 -5px 0 var(--fs-ink), 0 5px 0 var(--fs-ink);
+  }
+  .nav-mobile-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 180px;
+    padding: 18px 20px;
+    border: 1px solid var(--fs-line);
+    border-radius: var(--radius);
+    background: var(--fs-bg);
+    box-shadow: 0 14px 40px rgba(14, 26, 58, 0.14);
+  }
+
+  @media (max-width: 760px) {
+    .nav-mobile { display: block; }
+    .nav-cta { display: none; }
+  }
 </style>

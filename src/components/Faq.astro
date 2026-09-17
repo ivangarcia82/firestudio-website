@@ -1,0 +1,99 @@
+---
+import { useTranslations, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id={t.ids.faq} class="section">
+  <div class="section-inner faq-inner">
+    <div class="faq-head">
+      <p class="eyebrow">{t.faq.eyebrow}</p>
+      <h2 class="section-title">{t.faq.title}</h2>
+    </div>
+
+    <div class="faq-list">
+      {
+        t.faq.items.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-q">
+              <span>{item.q}</span>
+              <span class="faq-icon" aria-hidden="true" />
+            </summary>
+            <p class="faq-a">{item.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(28px, 4vw, 56px);
+    align-items: start;
+  }
+
+  .faq-head { display: flex; flex-direction: column; gap: 14px; }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--fs-line);
+  }
+
+  .faq-item { border-bottom: 1px solid var(--fs-line); }
+
+  .faq-q {
+    list-style: none;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 0;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-stretch: var(--wdth-normal);
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 1.35;
+    color: var(--fs-ink);
+  }
+  .faq-q::-webkit-details-marker { display: none; }
+  .faq-q:hover { color: var(--fs-accent-ink); }
+
+  /* Plus turning into a minus when open. */
+  .faq-icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    margin-top: 5px;
+  }
+  .faq-icon::before,
+  .faq-icon::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto 0;
+    height: 2px;
+    background: var(--fs-accent);
+    transition: transform 0.2s var(--ease-out);
+  }
+  .faq-icon::after { transform: rotate(90deg); }
+  .faq-item[open] .faq-icon::after { transform: rotate(0deg); }
+
+  .faq-a {
+    margin: 0;
+    padding: 0 40px 22px 0;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--fs-ink-65);
+    max-width: 62ch;
+  }
+</style>

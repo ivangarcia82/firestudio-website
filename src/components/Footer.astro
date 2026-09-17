@@ -1,13 +1,23 @@
 ---
-import { site, waHref, mailHref } from '../data/site';
+import {
+  useTranslations,
+  sectionHref,
+  privacyPath,
+  termsPath,
+  blogPath,
+  waHref,
+  type Lang,
+} from '../i18n';
+import { site, mailHref } from '../data/site';
 
-const sections = [
-  { href: '/#trabajo', label: 'Trabajo' },
-  { href: '/#servicios', label: 'Servicios' },
-  { href: '/#proceso', label: 'Cómo trabajamos' },
-  { href: '/#nosotros', label: 'Nosotros' },
-  { href: '/blog', label: 'Blog' },
-];
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const wa = waHref(lang, 'general');
+const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
@@ -18,31 +28,54 @@ const sections = [
           <span class="footer-mark" aria-hidden="true"></span>
           <span class="footer-name">Fire Studio</span>
         </div>
-        <p class="footer-tag">Diseño y desarrollo web desde Mérida, Yucatán.</p>
+        <p class="footer-tag">{t.footer.tagline}</p>
+        <p class="footer-location label">{t.footer.location}</p>
+      </div>
+
+      <nav class="footer-group" aria-label={t.footer.headingSections}>
+        <p class="footer-heading label">{t.footer.headingSections}</p>
+        {t.nav.links.map((l) => <a href={sectionHref(lang, l.id)} class="footer-link">{l.label}</a>)}
+        <a href={blogPath} class="footer-link">{t.footer.blog}</a>
+      </nav>
+
+      <div class="footer-group">
+        <p class="footer-heading label">{t.footer.headingContact}</p>
+        <a
+          href={mailHref}
+          class="footer-link"
+          data-track="contact"
+          data-track-placement="footer-email"
+        >
+          {site.email}
+        </a>
+        <a
+          href={wa}
+          target="_blank"
+          rel="noopener"
+          class="footer-link"
+          data-track="contact"
+          data-track-placement="footer-whatsapp"
+        >
+          {t.footer.whatsapp}
+        </a>
       </div>
 
       <div class="footer-group">
-        <p class="footer-heading mono">Secciones</p>
-        {sections.map((s) => <a href={s.href} class="footer-link">{s.label}</a>)}
-      </div>
-
-      <div class="footer-group">
-        <p class="footer-heading mono">Contacto</p>
-        <a href={waHref} target="_blank" rel="noopener" class="footer-link">WhatsApp</a>
-        <a href={mailHref} class="footer-link">{site.email}</a>
-      </div>
-
-      <div class="footer-group">
-        <p class="footer-heading mono">Redes</p>
+        <p class="footer-heading label">{t.footer.headingSocial}</p>
         <a href={site.instagram} target="_blank" rel="noopener" class="footer-link">Instagram</a>
         <a href={site.tiktok} target="_blank" rel="noopener" class="footer-link">TikTok</a>
         <a href={site.facebook} target="_blank" rel="noopener" class="footer-link">Facebook</a>
       </div>
+
+      <div class="footer-group">
+        <p class="footer-heading label">{t.footer.headingLegal}</p>
+        <a href={privacyPath(lang)} class="footer-link">{t.footer.privacy}</a>
+        <a href={termsPath(lang)} class="footer-link">{t.footer.terms}</a>
+      </div>
     </div>
 
-    <div class="footer-bottom mono">
-      <span>© 2026 Fire Studio · Mérida, Yucatán</span>
-      <a href="#" class="footer-legal">Aviso de privacidad</a>
+    <div class="footer-bottom label">
+      <span>© {year} {t.footer.rights}</span>
     </div>
   </div>
 </footer>
@@ -51,10 +84,10 @@ const sections = [
   .footer {
     padding: clamp(40px, 6vw, 64px) clamp(20px, 5vw, 56px) 110px;
     background: var(--fs-bg);
-    border-top: 1px solid rgba(242, 233, 225, 0.08);
+    border-top: 1px solid var(--fs-line);
   }
   .footer-inner {
-    max-width: 1100px;
+    max-width: 1160px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -62,48 +95,52 @@ const sections = [
   }
 
   .footer-cols {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
     gap: 32px;
   }
 
-  .footer-brand { display: flex; flex-direction: column; gap: 12px; max-width: 300px; }
+  .footer-brand { display: flex; flex-direction: column; gap: 10px; max-width: 300px; }
   .footer-logo { display: flex; align-items: center; gap: 10px; }
   .footer-mark {
     display: inline-block;
     width: 16px;
     height: 16px;
-    background: linear-gradient(160deg, #ffc24a 0%, #ff7a2d 45%, #e23b1e 100%);
+    background: linear-gradient(160deg, #ffc24a 0%, var(--fs-accent) 45%, #d8402a 100%);
     border-radius: 0 50% 50% 50%;
     transform: rotate(-45deg);
   }
   .footer-name {
     font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 17px;
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
+    font-size: 16px;
   }
   .footer-tag {
     margin: 0;
     font-size: 14px;
     line-height: 1.5;
-    color: rgba(242, 233, 225, 0.55);
+    color: var(--fs-ink-65);
+  }
+  .footer-location {
+    margin: 0;
+    font-size: 11px;
+    color: var(--fs-ink-50);
   }
 
   .footer-group { display: flex; flex-direction: column; gap: 10px; }
   .footer-heading {
     margin: 0 0 4px;
     font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(242, 233, 225, 0.45);
+    color: var(--fs-ink-50);
+    letter-spacing: 0.14em;
   }
   .footer-link {
     font-size: 14px;
-    color: rgba(242, 233, 225, 0.7);
+    color: var(--fs-ink-65);
     transition: color 0.2s ease;
   }
-  .footer-link:hover { color: var(--fs-amber); }
+  .footer-link:hover { color: var(--fs-ink); }
 
   .footer-bottom {
     display: flex;
@@ -111,10 +148,8 @@ const sections = [
     justify-content: space-between;
     gap: 12px;
     padding-top: 24px;
-    border-top: 1px solid rgba(242, 233, 225, 0.08);
-    font-size: 12px;
-    color: rgba(242, 233, 225, 0.4);
+    border-top: 1px solid var(--fs-line-soft);
+    font-size: 11px;
+    color: var(--fs-ink-50);
   }
-  .footer-legal { color: rgba(242, 233, 225, 0.4); }
-  .footer-legal:hover { color: var(--fs-amber); }
 </style>

@@ -1,0 +1,212 @@
+---
+import { useTranslations, waHref, type Lang } from '../i18n';
+import { packagePrices, servicePromises, type PackageId } from '../data/pending';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const quoteWa = waHref(lang, 'quote');
+
+// Package cards are rendered in the dictionary's order; ids line up with it.
+const ids: PackageId[] = ['launch', 'growth', 'scale'];
+const priceFor = (id: PackageId) => packagePrices[id]?.[lang] ?? null;
+
+// Only rendered once Ivan confirms them (see src/data/pending.ts).
+const promises = [servicePromises.deliveryTime, servicePromises.supportDays]
+  .filter((p) => p !== null)
+  .map((p) => p![lang]);
+---
+
+<section id={t.ids.packages} class="section section--surface">
+  <div class="section-inner">
+    <div class="head">
+      <p class="eyebrow">{t.packages.eyebrow}</p>
+      <h2 class="section-title">{t.packages.title}</h2>
+      <p class="lead">{t.packages.lead}</p>
+      {
+        promises.length > 0 && (
+          <ul class="promises">
+            {promises.map((promise) => <li class="label">{promise}</li>)}
+          </ul>
+        )
+      }
+    </div>
+
+    <div class="grid" data-reveal-group>
+      {
+        t.packages.items.map((pkg, i) => (
+          <article class={`pkg${pkg.popular ? ' pkg--popular' : ''}`}>
+            {pkg.popular && <span class="chip chip--accent pkg-flag">{t.packages.popular}</span>}
+            <h3 class="pkg-name">{pkg.name}</h3>
+            {priceFor(ids[i]) && <p class="pkg-price">{priceFor(ids[i])}</p>}
+            <p class="pkg-summary">{pkg.summary}</p>
+            <ul class="pkg-features">
+              {pkg.features.map((feature) => <li>{feature}</li>)}
+            </ul>
+            <a
+              href={quoteWa}
+              target="_blank"
+              rel="noopener"
+              class={`btn btn--sm pkg-cta${pkg.popular ? '' : ' btn--ghost'}`}
+              data-track="contact"
+              data-track-placement={`package-${ids[i]}`}
+            >
+              {t.packages.quoteCta}
+            </a>
+          </article>
+        ))
+      }
+    </div>
+
+    <article class="monthly">
+      <div class="monthly-copy">
+        <h3 class="monthly-name">{t.packages.monthly.name}</h3>
+        {packagePrices.monthly && <p class="pkg-price">{packagePrices.monthly[lang]}</p>}
+        <p class="monthly-summary">{t.packages.monthly.summary}</p>
+      </div>
+      <a
+        href={quoteWa}
+        target="_blank"
+        rel="noopener"
+        class="btn btn--sm btn--ghost"
+        data-track="contact"
+        data-track-placement="package-monthly"
+      >
+        {t.packages.monthly.cta}
+      </a>
+    </article>
+  </div>
+</section>
+
+<style>
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 60ch;
+    margin-bottom: clamp(32px, 5vw, 52px);
+  }
+  .lead {
+    margin: 0;
+    font-size: 16.5px;
+    line-height: 1.6;
+    color: var(--fs-ink-65);
+  }
+  .promises {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 4px 0 0;
+    padding: 0;
+  }
+  .promises li {
+    font-size: 11px;
+    color: var(--fs-accent-ink);
+    border: 1px solid var(--fs-line);
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .pkg {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: clamp(24px, 3vw, 32px);
+    border: 1px solid var(--fs-line);
+    border-radius: var(--radius-lg);
+    background: var(--fs-bg);
+  }
+  .pkg--popular { border-color: var(--fs-accent); }
+  .pkg-flag { position: absolute; top: -12px; left: clamp(24px, 3vw, 32px); }
+
+  .pkg-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: -0.015em;
+  }
+
+  .pkg-price {
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--fs-accent-ink);
+  }
+
+  .pkg-summary {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--fs-ink-65);
+  }
+
+  .pkg-features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: var(--fs-ink-80);
+  }
+  .pkg-features li {
+    position: relative;
+    padding-left: 20px;
+  }
+  .pkg-features li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--fs-accent);
+  }
+
+  .pkg-cta { margin-top: auto; align-self: flex-start; }
+
+  .monthly {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 20px;
+    padding: clamp(22px, 3vw, 30px);
+    border: 1px dashed var(--fs-ink-35);
+    border-radius: var(--radius-lg);
+  }
+  .monthly-copy { display: flex; flex-direction: column; gap: 8px; max-width: 58ch; }
+  .monthly-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+  }
+  .monthly-summary {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--fs-ink-65);
+  }
+</style>

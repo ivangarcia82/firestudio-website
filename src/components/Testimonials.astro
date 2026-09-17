@@ -1,37 +1,29 @@
 ---
-const testimonials = [
-  {
-    quote:
-      'Me explicaron todo sin tecnicismos y el precio fue el que acordamos desde el día uno. La tienda quedó con la personalidad editorial que buscábamos y hoy actualizamos cada colección solos.',
-    name: 'Daniela R.',
-    context: 'Sandra Weil · Tienda en línea',
-  },
-  {
-    quote:
-      'Siempre hablé con Ivan directamente. Le escribía por WhatsApp y me contestaba quien realmente estaba haciendo el sitio, no un intermediario.',
-    name: 'Jorge M.',
-    context: 'CEMEX Supply · E-commerce',
-  },
-  {
-    quote:
-      'Cada cambio en la ficha de producto lo probaron con datos antes de publicarlo. Dejamos de adivinar: ahora sabemos qué versión vende más.',
-    name: 'Mariana T.',
-    context: 'Sognare · CRO',
-  },
-];
+import { useTranslations, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
 ---
 
-<section class="testimonials">
-  <div class="testimonials-inner">
-    <h2 class="section-title testimonials-title">Lo que dicen los clientes</h2>
-    <div class="testimonials-grid" data-reveal-group>
+<section class="section section--surface">
+  <div class="section-inner">
+    <div class="head">
+      <h2 class="section-title">{t.testimonials.title}</h2>
+      {t.testimonials.note && <p class="note label">{t.testimonials.note}</p>}
+    </div>
+
+    <div class="grid" data-reveal-group>
       {
-        testimonials.map((t) => (
+        t.testimonials.items.map((item) => (
           <figure class="testimonial">
-            <blockquote>{t.quote}</blockquote>
+            <blockquote>{item.quote}</blockquote>
             <figcaption>
-              <span class="testimonial-name">{t.name}</span>
-              <span class="testimonial-context mono">{t.context}</span>
+              <span class="name">{item.name}</span>
+              <span class="context label">{item.context}</span>
             </figcaption>
           </figure>
         ))
@@ -41,24 +33,30 @@ const testimonials = [
 </section>
 
 <style>
-  .testimonials {
-    padding: clamp(56px, 8vw, 110px) clamp(20px, 5vw, 56px);
-    border-top: 1px solid rgba(242, 233, 225, 0.08);
-    background: var(--fs-bg-2);
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px 32px;
+    margin-bottom: clamp(32px, 5vw, 52px);
   }
-  .testimonials-inner { max-width: 1100px; margin: 0 auto; }
-  .testimonials-title { margin-bottom: clamp(32px, 5vw, 56px); }
+  .note {
+    margin: 0;
+    font-size: 11px;
+    color: var(--fs-ink-50);
+  }
 
-  .testimonials-grid {
+  .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
+    gap: 22px;
   }
 
   .testimonial {
     margin: 0;
-    border: 1px solid rgba(242, 233, 225, 0.12);
-    border-radius: 16px;
+    border: 1px solid var(--fs-line);
+    border-radius: var(--radius-lg);
     padding: 28px;
     background: var(--fs-bg);
     display: flex;
@@ -69,14 +67,14 @@ const testimonials = [
     margin: 0;
     font-size: 16.5px;
     line-height: 1.6;
-    color: rgba(242, 233, 225, 0.85);
+    color: var(--fs-ink-80);
   }
   .testimonial blockquote::before { content: '“'; }
   .testimonial blockquote::after { content: '”'; }
-  .testimonial figcaption { display: flex; flex-direction: column; gap: 2px; }
-  .testimonial-name { font-weight: 600; }
-  .testimonial-context {
-    font-size: 12px;
-    color: rgba(242, 233, 225, 0.5);
+  .testimonial figcaption { display: flex; flex-direction: column; gap: 3px; }
+  .name { font-weight: 600; }
+  .context {
+    font-size: 11px;
+    color: var(--fs-ink-50);
   }
 </style>

@@ -1,61 +1,85 @@
 ---
 import { Image } from 'astro:assets';
-import { waHref } from '../data/site';
-import { featured, gridProjects } from '../data/projects';
+import { useTranslations, waHref, workPath, type Lang } from '../i18n';
+import { localizedFeatured, localizedGrid } from '../i18n/projects';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const featured = localizedFeatured(lang);
+const gridProjects = localizedGrid(lang);
+const wa = waHref(lang, 'general');
 ---
 
-<section id="trabajo" class="work">
-  <div class="work-inner">
+<section id={t.ids.work} class="section work">
+  <div class="section-inner">
     <div class="work-head">
-      <h2 class="section-title">Trabajo</h2>
-      <p class="work-note mono">Ningún proyecto se parece a otro. Es a propósito.</p>
+      <h2 class="section-title">{t.work.title}</h2>
+      <p class="work-note">{t.work.note}</p>
     </div>
 
-    <!-- Caso destacado -->
     <article class="featured" data-reveal>
-      <a href={`/work/${featured.slug}`} class="featured-media" aria-label={`Ver caso: ${featured.name}`}>
-        <Image src={featured.image} alt={featured.alt} class="media-cover" widths={[480, 800, 1200]} sizes="(max-width: 760px) 100vw, 50vw" />
+      <a href={workPath(featured.slug)} class="featured-media" aria-label={`${t.work.viewCaseShort}: ${featured.name}`}>
+        <Image
+          src={featured.image}
+          alt={featured.alt}
+          class="media-cover"
+          widths={[480, 800, 1200]}
+          sizes="(max-width: 900px) 100vw, 50vw"
+          loading="lazy"
+          decoding="async"
+        />
       </a>
       <div class="featured-body">
         <div class="featured-tags">
-          <span class="chip chip--gradient">Caso destacado</span>
-          <span class="chip chip--amber">{featured.category}</span>
+          <span class="chip chip--accent">{t.work.featuredChip}</span>
+          <span class="chip">{featured.category}</span>
         </div>
         <h3 class="featured-title">
-          <a href={`/work/${featured.slug}`}>{featured.name} — {featured.tagline.toLowerCase()}</a>
+          <a href={workPath(featured.slug)}>{featured.name} — {featured.tagline.toLowerCase()}</a>
         </h3>
         <div class="featured-detail">
-          <p><strong class="detail-label">Reto</strong>{featured.reto}</p>
-          <p><strong class="detail-label">Solución</strong>{featured.solucion}</p>
-          <p><strong class="detail-label">Resultado</strong>{featured.resultado}</p>
+          <p><strong class="detail-label">{t.work.labelChallenge}</strong>{featured.reto}</p>
+          <p><strong class="detail-label">{t.work.labelSolution}</strong>{featured.solucion}</p>
+          <p><strong class="detail-label">{t.work.labelResult}</strong>{featured.resultado}</p>
         </div>
-        <a href={`/work/${featured.slug}`} class="link-underline link-underline--amber featured-more">Ver caso completo →</a>
+        <a href={workPath(featured.slug)} class="link-underline featured-more">{t.work.viewCase} →</a>
       </div>
     </article>
 
-    <!-- Grid de proyectos -->
     <div class="grid" data-reveal-group>
       {
         gridProjects.map((p) => (
-          <a href={`/work/${p.slug}`} class="card" aria-label={`Ver caso: ${p.name}`}>
+          <a href={workPath(p.slug)} class="card" aria-label={`${t.work.viewCaseShort}: ${p.name}`}>
             <div class="card-media">
-              <Image src={p.image} alt={p.alt} class="media-cover" widths={[320, 580, 900]} sizes="(max-width: 760px) 100vw, 33vw" />
+              <Image
+                src={p.image}
+                alt={p.alt}
+                class="media-cover"
+                widths={[320, 580, 900]}
+                sizes="(max-width: 760px) 100vw, 33vw"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
             <div class="card-body">
-              <span class={`chip chip--${p.tone}`}>{p.category}</span>
+              <span class="chip">{p.category}</span>
               <h3 class="card-title">{p.name}</h3>
               <p class="card-summary">{p.summary}</p>
-              <span class="card-more mono">Ver caso →</span>
+              <span class="card-more label">{t.work.viewCaseShort} →</span>
             </div>
           </a>
         ))
       }
 
       <article class="card card--cta">
-        <p class="mono cta-eyebrow">Siguiente proyecto</p>
-        <h3 class="cta-title">¿El tuyo?</h3>
-        <a href={waHref} target="_blank" rel="noopener" class="link-underline link-underline--amber">
-          Cuéntanos tu proyecto →
+        <p class="label cta-eyebrow">{t.work.nextEyebrow}</p>
+        <h3 class="cta-title">{t.work.nextTitle}</h3>
+        <a href={wa} target="_blank" rel="noopener" class="link-underline" data-track="contact" data-track-placement="work">
+          {t.work.nextCta} →
         </a>
       </article>
     </div>
@@ -63,53 +87,51 @@ import { featured, gridProjects } from '../data/projects';
 </section>
 
 <style>
-  .work {
-    padding: clamp(56px, 8vw, 110px) clamp(20px, 5vw, 56px);
-    border-top: 1px solid rgba(242, 233, 225, 0.08);
-  }
-  .work-inner { max-width: 1200px; margin: 0 auto; }
-
   .work-head {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: clamp(32px, 5vw, 56px);
+    gap: 12px 32px;
+    margin-bottom: clamp(32px, 5vw, 52px);
   }
   .work-note {
     margin: 0;
-    font-size: 13px;
-    color: rgba(242, 233, 225, 0.55);
+    max-width: 46ch;
+    font-size: 15.5px;
+    line-height: 1.5;
+    color: var(--fs-ink-65);
   }
 
   /* Featured */
   .featured {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    border: 1px solid rgba(242, 233, 225, 0.12);
-    border-radius: 20px;
+    border: 1px solid var(--fs-line);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    background: var(--fs-bg-2);
+    background: var(--fs-surface);
     margin-bottom: 28px;
   }
   .featured-media { position: relative; min-height: 340px; display: block; }
   .featured-body {
-    padding: clamp(28px, 4vw, 48px);
+    padding: clamp(28px, 4vw, 44px);
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 18px;
   }
   .featured-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
   .featured-title {
     margin: 0;
     font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(26px, 3vw, 36px);
-    letter-spacing: -0.02em;
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
+    font-size: clamp(24px, 2.8vw, 32px);
+    line-height: 1.12;
+    letter-spacing: -0.015em;
   }
-  .featured-title a { color: var(--fs-text); transition: color 0.2s ease; }
-  .featured-title a:hover { color: var(--fs-amber); }
+  .featured-title a { color: var(--fs-ink); transition: color 0.2s ease; }
+  .featured-title a:hover { color: var(--fs-accent-ink); }
   .featured-more { align-self: flex-start; }
   .featured-detail {
     display: flex;
@@ -117,45 +139,47 @@ import { featured, gridProjects } from '../data/projects';
     gap: 14px;
     font-size: 15.5px;
     line-height: 1.55;
-    color: rgba(242, 233, 225, 0.78);
+    color: var(--fs-ink-80);
   }
   .featured-detail p { margin: 0; }
   .detail-label {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--fs-orange);
     display: block;
     margin-bottom: 4px;
+    font-family: var(--font-label);
+    font-stretch: var(--wdth-condensed);
+    font-weight: 700;
+    font-size: 11.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fs-accent-ink);
   }
 
   /* Grid */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-    gap: 28px;
+    gap: 24px;
   }
 
   .card {
-    border: 1px solid rgba(242, 233, 225, 0.12);
-    border-radius: 20px;
+    border: 1px solid var(--fs-line);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    background: var(--fs-bg-2);
+    background: var(--fs-bg);
     display: flex;
     flex-direction: column;
-    color: var(--fs-text);
+    color: var(--fs-ink);
     transition: border-color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
   }
   /* Touch devices fire :hover on tap and leave it stuck — gate lift behind a real pointer. */
   @media (hover: hover) and (pointer: fine) {
-    .card:hover { border-color: rgba(255, 122, 45, 0.5); transform: translateY(-3px); color: var(--fs-text); }
+    .card:hover { border-color: var(--fs-accent); transform: translateY(-3px); color: var(--fs-ink); }
   }
 
-  .card-media { position: relative; height: 260px; }
+  .card-media { position: relative; height: 240px; }
 
   .card-body {
-    padding: 24px 26px 28px;
+    padding: 22px 24px 26px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -163,48 +187,44 @@ import { featured, gridProjects } from '../data/projects';
   .card-title {
     margin: 4px 0 0;
     font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
     font-weight: 700;
-    font-size: 24px;
+    font-size: 22px;
     letter-spacing: -0.01em;
   }
   .card-summary {
     margin: 0;
     font-size: 15px;
     line-height: 1.5;
-    color: rgba(242, 233, 225, 0.65);
+    color: var(--fs-ink-65);
   }
   .card-more {
     margin-top: 4px;
-    font-size: 12.5px;
-    letter-spacing: 0.04em;
-    color: var(--fs-amber);
-    opacity: 0.85;
-    transition: opacity 0.2s ease;
+    font-size: 11.5px;
+    color: var(--fs-accent-ink);
   }
-  .card:hover .card-more { opacity: 1; }
 
   /* CTA card */
   .card--cta {
     border-style: dashed;
-    border-color: rgba(242, 233, 225, 0.25);
+    border-color: var(--fs-ink-35);
     background: transparent;
     align-items: flex-start;
     justify-content: center;
     gap: 14px;
     padding: 32px;
-    min-height: 260px;
+    min-height: 240px;
   }
-  .card--cta:hover { transform: none; border-color: rgba(255, 122, 45, 0.5); }
+  .card--cta:hover { transform: none; }
   .cta-eyebrow {
     margin: 0;
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(242, 233, 225, 0.5);
+    font-size: 11px;
+    color: var(--fs-ink-50);
   }
   .cta-title {
     margin: 0;
     font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
     font-weight: 700;
     font-size: 26px;
     letter-spacing: -0.01em;

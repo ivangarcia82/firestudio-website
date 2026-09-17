@@ -1,29 +1,47 @@
 ---
 import { Image } from 'astro:assets';
 import { getSortedPosts, formatDate } from '../lib/blog';
+import { useTranslations, blogPath, type Lang } from '../i18n';
 
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
 const posts = (await getSortedPosts()).slice(0, 3);
 ---
 
-<section id="blog" class="blog">
-  <div class="blog-inner">
+<section id="blog" class="section section--surface">
+  <div class="section-inner">
     <div class="blog-head">
-      <h2 class="section-title">Blog</h2>
-      <a href="/blog" class="link-underline link-underline--amber">Ver todo →</a>
+      <h2 class="section-title">{t.blog.title}</h2>
+      {/* The blog is Spanish-only — in English the link says so. */}
+      <a href={blogPath} class="link-underline">
+        {lang === 'es' ? t.blog.seeAll : t.footer.blog} →
+      </a>
     </div>
 
     <div class="blog-grid" data-reveal-group>
       {
         posts.map((post) => (
-          <a href={`/blog/${post.id}`} class="post-card" aria-label={post.data.title}>
+          <a href={`/blog/${post.id}/`} class="post-card" aria-label={post.data.title}>
             <div class="post-media">
-              <Image src={post.data.cover} alt={post.data.coverAlt} class="media-cover" widths={[320, 560, 800]} sizes="(max-width: 760px) 100vw, 33vw" />
-              <span class="post-chip mono">{post.data.category}</span>
+              <Image
+                src={post.data.cover}
+                alt={post.data.coverAlt}
+                class="media-cover"
+                widths={[320, 560, 800]}
+                sizes="(max-width: 760px) 100vw, 33vw"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
             <div class="post-body">
+              <span class="chip">{post.data.category}</span>
               <h3 class="post-title">{post.data.title}</h3>
               <p class="post-excerpt">{post.data.description}</p>
-              <p class="post-meta mono">{formatDate(post.data.date)} · {post.data.readingTime}</p>
+              <p class="post-meta label">{formatDate(post.data.date)} · {post.data.readingTime}</p>
             </div>
           </a>
         ))
@@ -33,61 +51,40 @@ const posts = (await getSortedPosts()).slice(0, 3);
 </section>
 
 <style>
-  .blog {
-    padding: clamp(56px, 8vw, 110px) clamp(20px, 5vw, 56px);
-    border-top: 1px solid rgba(242, 233, 225, 0.08);
-    background: var(--fs-bg-2);
-  }
-  .blog-inner { max-width: 1200px; margin: 0 auto; }
-
   .blog-head {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
+    gap: 12px 32px;
     margin-bottom: clamp(32px, 5vw, 48px);
   }
 
   .blog-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 28px;
+    gap: 24px;
   }
 
   .post-card {
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(242, 233, 225, 0.12);
-    border-radius: 20px;
+    border: 1px solid var(--fs-line);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     background: var(--fs-bg);
-    color: var(--fs-text);
+    color: var(--fs-ink);
     transition: border-color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
   }
-  .post-media { position: relative; height: 200px; }
+  .post-media { position: relative; height: 190px; }
   .post-media .media-cover { transition: transform 0.35s var(--ease-out); }
   @media (hover: hover) and (pointer: fine) {
-    .post-card:hover { border-color: rgba(255, 122, 45, 0.5); transform: translateY(-3px); color: var(--fs-text); }
+    .post-card:hover { border-color: var(--fs-accent); transform: translateY(-3px); color: var(--fs-ink); }
     .post-card:hover .post-media .media-cover { transform: scale(1.04); }
-  }
-  .post-chip {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 5px 12px;
-    border-radius: 999px;
-    background: rgba(23, 16, 15, 0.82);
-    backdrop-filter: blur(6px);
-    color: var(--fs-amber);
-    border: 1px solid rgba(255, 194, 74, 0.35);
   }
 
   .post-body {
-    padding: 22px 24px 26px;
+    padding: 20px 22px 24px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -96,8 +93,9 @@ const posts = (await getSortedPosts()).slice(0, 3);
   .post-title {
     margin: 0;
     font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
     font-weight: 700;
-    font-size: clamp(19px, 2vw, 23px);
+    font-size: clamp(18px, 2vw, 21px);
     line-height: 1.2;
     letter-spacing: -0.01em;
     text-wrap: balance;
@@ -106,12 +104,12 @@ const posts = (await getSortedPosts()).slice(0, 3);
     margin: 0;
     font-size: 14.5px;
     line-height: 1.5;
-    color: rgba(242, 233, 225, 0.65);
+    color: var(--fs-ink-65);
   }
   .post-meta {
     margin: auto 0 0;
     padding-top: 6px;
-    font-size: 12px;
-    color: rgba(242, 233, 225, 0.5);
+    font-size: 11px;
+    color: var(--fs-ink-50);
   }
 </style>

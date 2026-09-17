@@ -1,0 +1,84 @@
+---
+import { useTranslations, bookingHref, type Lang } from '../i18n';
+import { site, mailHref } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const booking = bookingHref(lang);
+const external = booking.startsWith('http');
+---
+
+<section id={t.ids.contact} class="section section--ink cta">
+  <div class="section-inner cta-inner">
+    <h2 class="cta-title">{t.finalCta.title}</h2>
+    <p class="cta-lead">{t.finalCta.lead}</p>
+
+    <a
+      href={booking}
+      target={external ? '_blank' : null}
+      rel={external ? 'noopener' : null}
+      class="btn cta-btn"
+      data-track="schedule"
+      data-track-placement="final-cta"
+    >
+      {t.finalCta.cta}
+    </a>
+
+    <p class="cta-mail">
+      {t.finalCta.mailLead}{' '}
+      <a href={mailHref} data-track="contact" data-track-placement="final-cta-email">
+        {site.email}
+      </a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .cta { border-top: none; }
+
+  .cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+    max-width: 760px;
+  }
+
+  .cta-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
+    font-size: clamp(34px, 5.2vw, 62px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .cta-lead {
+    margin: 0;
+    max-width: 48ch;
+    font-size: clamp(16px, 1.8vw, 19px);
+    line-height: 1.55;
+    color: rgba(244, 246, 245, 0.72);
+  }
+
+  .cta-btn { margin-top: 8px; }
+
+  .cta-mail {
+    margin: 4px 0 0;
+    font-size: 15px;
+    color: rgba(244, 246, 245, 0.6);
+  }
+  .cta-mail a {
+    color: var(--fs-accent);
+    border-bottom: 1px solid rgba(247, 147, 30, 0.45);
+    padding-bottom: 2px;
+  }
+  .cta-mail a:hover { color: var(--fs-on-ink); border-bottom-color: var(--fs-on-ink); }
+</style>

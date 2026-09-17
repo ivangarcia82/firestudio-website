@@ -1,0 +1,92 @@
+---
+import { useTranslations, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id={t.ids.bilingual} class="section section--ink bilingual">
+  <div class="section-inner bilingual-inner">
+    <div class="bilingual-copy">
+      <p class="eyebrow eyebrow--invert">{t.bilingual.eyebrow}</p>
+      <h2 class="section-title">{t.bilingual.title}</h2>
+      <p class="bilingual-lead">{t.bilingual.lead}</p>
+    </div>
+
+    <ul class="points" data-reveal-group>
+      {
+        t.bilingual.points.map((point) => (
+          <li class="point">
+            <h3 class="point-title">{point.title}</h3>
+            <p class="point-body">{point.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .bilingual { border-top: none; }
+
+  .bilingual-inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(32px, 5vw, 64px);
+    align-items: start;
+  }
+
+  .bilingual-copy { display: flex; flex-direction: column; gap: 20px; }
+
+  .eyebrow--invert { color: var(--fs-accent); }
+
+  .bilingual-lead {
+    margin: 0;
+    max-width: 48ch;
+    font-size: clamp(16px, 1.7vw, 18.5px);
+    line-height: 1.6;
+    color: rgba(244, 246, 245, 0.72);
+  }
+
+  .points {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px;
+    background: rgba(244, 246, 245, 0.16);
+    border: 1px solid rgba(244, 246, 245, 0.16);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .point {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px;
+    background: var(--fs-ink);
+  }
+
+  .point-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.005em;
+    color: var(--fs-on-ink);
+  }
+
+  .point-body {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: rgba(244, 246, 245, 0.68);
+  }
+</style>
