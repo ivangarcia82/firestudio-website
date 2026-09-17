@@ -1,0 +1,337 @@
+---
+import { useTranslations, privacyPath, type Lang } from '../i18n';
+import { site } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const f = t.audit.form;
+---
+
+<section id={t.ids.audit} class="section section--surface audit">
+  <div class="section-inner audit-inner">
+    <div class="audit-copy">
+      <p class="eyebrow">{t.audit.eyebrow}</p>
+      <h2 class="section-title">{t.audit.title}</h2>
+      <p class="audit-lead">{t.audit.lead}</p>
+    </div>
+
+    <form
+      class="audit-form"
+      data-audit-form
+      data-lang={lang}
+      data-wa-number={site.whatsappNumber}
+      data-msg-success={t.audit.success}
+      data-msg-failure={t.audit.failure}
+      data-msg-sending={f.sending}
+      data-msg-submit={f.submit}
+      data-err-store={t.audit.errors.storeUrl}
+      data-err-email={t.audit.errors.email}
+      data-err-revenue={t.audit.errors.revenue}
+      data-wa-cta={t.audit.failureCta}
+      novalidate
+    >
+      <div class="field">
+        <label for="audit-store">{f.storeUrl}</label>
+        <input
+          id="audit-store"
+          name="storeUrl"
+          type="text"
+          inputmode="url"
+          autocomplete="url"
+          placeholder={f.storeUrlPlaceholder}
+          required
+          aria-describedby="audit-store-error"
+        />
+        <p class="error" id="audit-store-error" data-error-for="storeUrl" hidden></p>
+      </div>
+
+      <div class="field">
+        <label for="audit-email">{f.email}</label>
+        <input
+          id="audit-email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          placeholder={f.emailPlaceholder}
+          required
+          aria-describedby="audit-email-error"
+        />
+        <p class="error" id="audit-email-error" data-error-for="email" hidden></p>
+      </div>
+
+      <div class="field">
+        <label for="audit-revenue">{f.revenue}</label>
+        <select id="audit-revenue" name="revenue" required aria-describedby="audit-revenue-error">
+          <option value="">—</option>
+          {f.revenueOptions.map((o) => <option value={o.value}>{o.label}</option>)}
+        </select>
+        <p class="error" id="audit-revenue-error" data-error-for="revenue" hidden></p>
+      </div>
+
+      <div class="field">
+        <label for="audit-language">{f.language}</label>
+        <select id="audit-language" name="language">
+          {
+            f.languageOptions.map((o) => (
+              <option value={o.value} selected={o.value === lang}>
+                {o.label}
+              </option>
+            ))
+          }
+        </select>
+      </div>
+
+      {/* Honeypot — off-screen rather than display:none so bots still fill it. */}
+      <div class="honeypot" aria-hidden="true">
+        <label for="audit-company">{f.honeypotLabel}</label>
+        <input id="audit-company" name="company" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <button type="submit" class="btn audit-submit">{f.submit}</button>
+
+      <p class="privacy">
+        {f.privacyNote}{' '}
+        <a href={privacyPath(lang)}>{f.privacyLink}</a>
+      </p>
+
+      <div class="status" data-audit-status role="status" aria-live="polite" hidden></div>
+    </form>
+  </div>
+</section>
+
+<style>
+  .audit-inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(32px, 5vw, 64px);
+    align-items: start;
+  }
+
+  .audit-copy { display: flex; flex-direction: column; gap: 18px; }
+  .audit-lead {
+    margin: 0;
+    max-width: 48ch;
+    font-size: 16.5px;
+    line-height: 1.6;
+    color: var(--fs-ink-65);
+  }
+
+  .audit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: clamp(24px, 3vw, 34px);
+    border: 1px solid var(--fs-line);
+    border-radius: var(--radius-lg);
+    background: var(--fs-bg);
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-family: var(--font-label);
+    font-stretch: var(--wdth-condensed);
+    font-weight: 600;
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fs-ink-65);
+  }
+
+  .field input,
+  .field select {
+    padding: 13px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--fs-line);
+    background: var(--fs-bg);
+    color: var(--fs-ink);
+    font-family: var(--font-body);
+    font-size: 15.5px;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .field input:focus,
+  .field select:focus { border-color: var(--fs-accent); }
+  .field input[aria-invalid='true'],
+  .field select[aria-invalid='true'] { border-color: var(--fs-heat-3); }
+
+  .error {
+    margin: 0;
+    font-size: 13px;
+    color: var(--fs-heat-3);
+  }
+  .error[hidden] { display: none; }
+
+  .honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .audit-submit { margin-top: 4px; }
+  .audit-submit[disabled] { opacity: 0.6; cursor: progress; }
+
+  .privacy {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--fs-ink-50);
+  }
+  .privacy a { color: var(--fs-accent-ink); border-bottom: 1px solid var(--fs-line); }
+
+  .status {
+    margin-top: 4px;
+    padding: 16px 18px;
+    border-radius: var(--radius);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .status[hidden] { display: none; }
+  .status--ok { background: var(--fs-accent-soft); color: var(--fs-ink); }
+  .status--error { background: rgba(216, 64, 42, 0.1); color: var(--fs-ink); }
+  .status :global(.status-wa) { display: inline-flex; margin-top: 12px; }
+</style>
+
+<script>
+  import { validateAudit, normalizeStoreUrl, type AuditField } from '../lib/audit';
+
+  function initAuditForm() {
+    const form = document.querySelector<HTMLFormElement>('[data-audit-form]');
+    if (!form) return;
+
+    const status = form.querySelector<HTMLElement>('[data-audit-status]');
+    const submit = form.querySelector<HTMLButtonElement>('.audit-submit');
+    if (!status || !submit) return;
+
+    const d = form.dataset;
+    const messages: Record<AuditField, string> = {
+      storeUrl: d.errStore ?? '',
+      email: d.errEmail ?? '',
+      revenue: d.errRevenue ?? '',
+    };
+
+    const fieldEl = (name: AuditField) =>
+      form.querySelector<HTMLInputElement | HTMLSelectElement>(`[name="${name}"]`);
+    const errorEl = (name: AuditField) =>
+      form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+
+    function showErrors(errors: Partial<Record<AuditField, true>>) {
+      (['storeUrl', 'email', 'revenue'] as AuditField[]).forEach((name) => {
+        const input = fieldEl(name);
+        const error = errorEl(name);
+        const invalid = Boolean(errors[name]);
+        if (input) input.setAttribute('aria-invalid', String(invalid));
+        if (error) {
+          error.textContent = invalid ? messages[name] : '';
+          error.hidden = !invalid;
+        }
+      });
+      const first = (['storeUrl', 'email', 'revenue'] as AuditField[]).find((n) => errors[n]);
+      if (first) fieldEl(first)?.focus();
+    }
+
+    function readForm() {
+      const data = new FormData(form);
+      return {
+        storeUrl: String(data.get('storeUrl') ?? ''),
+        email: String(data.get('email') ?? ''),
+        revenue: String(data.get('revenue') ?? ''),
+        language: String(data.get('language') ?? 'es'),
+        company: String(data.get('company') ?? ''),
+      };
+    }
+
+    /** Same payload as the API call, handed to WhatsApp when the API is down. */
+    function whatsappFallback(payload: ReturnType<typeof readForm>) {
+      const number = (d.waNumber ?? '').replace(/\D/g, '');
+      const store = normalizeStoreUrl(payload.storeUrl) ?? payload.storeUrl;
+      const lines = [
+        d.lang === 'en'
+          ? 'Hi, I would like the free audit for my store.'
+          : 'Hola, quiero la auditoría gratis de mi tienda.',
+        `${d.lang === 'en' ? 'Store' : 'Tienda'}: ${store}`,
+        `${d.lang === 'en' ? 'Email' : 'Correo'}: ${payload.email}`,
+        `${d.lang === 'en' ? 'Monthly sales' : 'Ventas mensuales'}: ${payload.revenue}`,
+        `${d.lang === 'en' ? 'Language' : 'Idioma'}: ${payload.language}`,
+      ];
+      return `https://wa.me/${number}?text=${encodeURIComponent(lines.join('\n'))}`;
+    }
+
+    function showSuccess() {
+      status.className = 'status status--ok';
+      status.textContent = d.msgSuccess ?? '';
+      status.hidden = false;
+      form.querySelectorAll('.field, .audit-submit, .privacy').forEach((el) => {
+        (el as HTMLElement).hidden = true;
+      });
+      window.fsTrack?.('lead', { placement: 'audit-form' });
+    }
+
+    function showFailure(payload: ReturnType<typeof readForm>) {
+      status.className = 'status status--error';
+      status.textContent = d.msgFailure ?? '';
+      const link = document.createElement('a');
+      link.className = 'btn btn--sm status-wa';
+      link.href = whatsappFallback(payload);
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = d.waCta ?? '';
+      link.setAttribute('data-track', 'contact');
+      link.setAttribute('data-track-placement', 'audit-fallback');
+      status.appendChild(document.createElement('br'));
+      status.appendChild(link);
+      status.hidden = false;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const payload = readForm();
+
+      const errors = validateAudit(payload);
+      if (Object.keys(errors).length > 0) {
+        showErrors(errors);
+        return;
+      }
+      showErrors({});
+
+      submit.disabled = true;
+      submit.textContent = d.msgSending ?? '';
+      status.hidden = true;
+
+      try {
+        const res = await fetch('/api/audit', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const body = (await res.json().catch(() => ({}))) as {
+          ok?: boolean;
+          errors?: Partial<Record<AuditField, true>>;
+        };
+
+        if (res.ok && body.ok) {
+          showSuccess();
+          return;
+        }
+        if (res.status === 400 && body.errors) {
+          showErrors(body.errors);
+          return;
+        }
+        showFailure(payload);
+      } catch {
+        showFailure(payload);
+      } finally {
+        submit.disabled = false;
+        submit.textContent = d.msgSubmit ?? '';
+      }
+    });
+  }
+
+  initAuditForm();
+  document.addEventListener('astro:page-load', initAuditForm);
+</script>
