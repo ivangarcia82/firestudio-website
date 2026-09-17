@@ -1,0 +1,80 @@
+---
+interface Props {
+  title: string;
+  updated: string;
+  updatedLabel: string;
+  /** Visible "pending legal review" banner — required until a lawyer signs off. */
+  draftNotice: string;
+}
+
+const { title, updated, updatedLabel, draftNotice } = Astro.props;
+---
+
+<article class="legal">
+  <div class="legal-inner">
+    <h1 class="legal-title">{title}</h1>
+    <p class="legal-updated label">{updatedLabel}: {updated}</p>
+    <aside class="legal-draft" role="note">{draftNotice}</aside>
+    <div class="legal-body">
+      <slot />
+    </div>
+  </div>
+</article>
+
+<style>
+  .legal {
+    padding: clamp(48px, 7vw, 88px) clamp(20px, 5vw, 56px) clamp(56px, 8vw, 96px);
+  }
+  .legal-inner { max-width: 760px; margin: 0 auto; }
+
+  .legal-title {
+    margin: 0 0 12px;
+    font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
+    font-size: clamp(30px, 4.4vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .legal-updated {
+    margin: 0 0 24px;
+    font-size: 11px;
+    color: var(--fs-ink-50);
+  }
+
+  .legal-draft {
+    margin: 0 0 36px;
+    padding: 16px 18px;
+    border-left: 3px solid var(--fs-accent);
+    background: var(--fs-accent-soft);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--fs-ink);
+  }
+
+  .legal-body {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--fs-ink-80);
+  }
+  .legal-body :global(h2) {
+    margin: 36px 0 12px;
+    font-family: var(--font-display);
+    font-stretch: var(--wdth-expanded);
+    font-weight: 700;
+    font-size: 21px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--fs-ink);
+  }
+  .legal-body :global(p) { margin: 0 0 16px; }
+  .legal-body :global(ul) { margin: 0 0 16px; padding-left: 20px; }
+  .legal-body :global(li) { margin-bottom: 8px; }
+  .legal-body :global(a) {
+    color: var(--fs-accent-ink);
+    border-bottom: 1px solid var(--fs-line);
+  }
+</style>

@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import LegalArticle from '../components/LegalArticle.astro';
+import { site, mailHref } from '../data/site';
+
+const lang = 'es' as const;
+const title = 'Términos y condiciones';
+const description =
+  'Condiciones de uso del sitio de Fire Studio y marco general de nuestros servicios de desarrollo Shopify.';
+---
+
+<Layout lang={lang} routeKey="terms" title={`${title} · Fire Studio`} description={description}>
+  <Nav lang={lang} routeKey="terms" />
+  <main id="main">
+    <LegalArticle
+      title={title}
+      updatedLabel="Última actualización"
+      updated="16 de septiembre de 2026"
+      draftNotice="Borrador pendiente de revisión legal. Las condiciones de cada proyecto se establecen en la propuesta y el contrato que firmamos contigo; este texto solo cubre el uso del sitio."
+    >
+      <h2>Sobre este sitio</h2>
+      <p>
+        Este sitio pertenece a Fire Studio, estudio de desarrollo Shopify con base en {site.city},
+        {site.region}, {site.country}. Al navegarlo aceptas estas condiciones.
+      </p>
+
+      <h2>Información publicada</h2>
+      <p>
+        Los textos, casos y descripciones de servicio son informativos y pueden cambiar sin aviso.
+        No constituyen una oferta vinculante. El alcance, el precio y las condiciones de cada
+        proyecto se definen siempre en una propuesta por escrito.
+      </p>
+
+      <h2>Auditoría gratuita y formularios</h2>
+      <p>
+        La auditoría gratuita es una revisión informativa de tu tienda. No sustituye una consultoría
+        formal ni garantiza un resultado comercial. Al enviarnos el formulario aceptas que te
+        contactemos para darle seguimiento, conforme a nuestro
+        <a href="/aviso-de-privacidad/">aviso de privacidad</a>.
+      </p>
+
+      <h2>Propiedad intelectual</h2>
+      <p>
+        La marca, los textos y el diseño de este sitio son propiedad de Fire Studio. Los nombres y
+        marcas de los proyectos mostrados pertenecen a sus respectivos titulares y se muestran
+        únicamente con fines de portafolio.
+      </p>
+
+      <h2>Trabajo entregado</h2>
+      <p>
+        En los proyectos que desarrollamos, el dominio y las cuentas de la tienda quedan siempre a
+        nombre del cliente. La titularidad del trabajo entregado y las condiciones de soporte se
+        detallan en el contrato de cada proyecto.
+      </p>
+
+      <h2>Enlaces y servicios de terceros</h2>
+      <p>
+        El sitio enlaza a servicios de terceros como WhatsApp, Instagram, TikTok, Facebook y las
+        tiendas de nuestros clientes. No controlamos su contenido ni sus políticas.
+      </p>
+
+      <h2>Responsabilidad</h2>
+      <p>
+        Procuramos que la información del sitio esté correcta y actualizada, pero no garantizamos
+        que esté libre de errores ni que el sitio esté disponible sin interrupciones.
+      </p>
+
+      <h2>Ley aplicable</h2>
+      <p>
+        Estas condiciones se rigen por la legislación mexicana. Cualquier controversia se resolverá
+        ante los tribunales competentes de {site.city}, {site.region}.
+      </p>
+
+      <h2>Contacto</h2>
+      <p>¿Dudas sobre estos términos? Escríbenos a <a href={mailHref}>{site.email}</a>.</p>
+    </LegalArticle>
+  </main>
+  <Footer lang={lang} />
+</Layout>

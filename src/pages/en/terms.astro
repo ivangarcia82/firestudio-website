@@ -1,0 +1,80 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import LegalArticle from '../../components/LegalArticle.astro';
+import { site, mailHref } from '../../data/site';
+
+const lang = 'en' as const;
+const title = 'Terms and conditions';
+const description =
+  'Terms of use for the Fire Studio site and the general framework for our Shopify development services.';
+---
+
+<Layout lang={lang} routeKey="terms" title={`${title} · Fire Studio`} description={description}>
+  <Nav lang={lang} routeKey="terms" />
+  <main id="main">
+    <LegalArticle
+      title={title}
+      updatedLabel="Last updated"
+      updated="September 16, 2026"
+      draftNotice="Draft pending legal review. The terms of each project are set out in the proposal and contract we sign with you; this text only covers use of the site."
+    >
+      <h2>About this site</h2>
+      <p>
+        This site belongs to Fire Studio, a Shopify development studio based in {site.city},
+        {site.region}, Mexico. By browsing it you accept these terms.
+      </p>
+
+      <h2>Published information</h2>
+      <p>
+        Texts, case studies and service descriptions are informational and may change without
+        notice. They are not a binding offer. The scope, price and terms of each project are always
+        defined in a written proposal.
+      </p>
+
+      <h2>Free audit and forms</h2>
+      <p>
+        The free audit is an informational review of your store. It does not replace formal
+        consulting and does not guarantee a commercial result. By submitting the form you agree that
+        we may contact you to follow up, in line with our
+        <a href="/en/privacy/">privacy notice</a>.
+      </p>
+
+      <h2>Intellectual property</h2>
+      <p>
+        The brand, texts and design of this site belong to Fire Studio. The names and trademarks of
+        the projects shown belong to their respective owners and appear for portfolio purposes only.
+      </p>
+
+      <h2>Delivered work</h2>
+      <p>
+        On the projects we build, the domain and the store accounts are always registered in the
+        client's name. Ownership of the delivered work and support terms are detailed in each
+        project contract.
+      </p>
+
+      <h2>Third-party links and services</h2>
+      <p>
+        The site links to third-party services such as WhatsApp, Instagram, TikTok, Facebook and our
+        clients' stores. We do not control their content or their policies.
+      </p>
+
+      <h2>Liability</h2>
+      <p>
+        We work to keep the information on this site correct and current, but we do not guarantee
+        that it is free of errors or that the site will be available without interruption.
+      </p>
+
+      <h2>Governing law</h2>
+      <p>
+        These terms are governed by Mexican law. Any dispute will be resolved before the competent
+        courts of {site.city}, {site.region}.
+      </p>
+
+      <h2>Contact</h2>
+      <p>Questions about these terms? Write to us at <a href={mailHref}>{site.email}</a>.</p>
+    </LegalArticle>
+  </main>
+  <Footer lang={lang} />
+</Layout>

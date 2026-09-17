@@ -1,0 +1,90 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import LegalArticle from '../../components/LegalArticle.astro';
+import { site, mailHref } from '../../data/site';
+
+const lang = 'en' as const;
+const title = 'Privacy notice';
+const description =
+  'How Fire Studio collects, uses and protects the personal data you share through this site.';
+---
+
+<Layout lang={lang} routeKey="privacy" title={`${title} · Fire Studio`} description={description}>
+  <Nav lang={lang} routeKey="privacy" />
+  <main id="main">
+    <LegalArticle
+      title={title}
+      updatedLabel="Last updated"
+      updated="September 16, 2026"
+      draftNotice="Draft pending legal review. This text describes how the site works today, but a lawyer has not reviewed it yet. If you need a definitive version, write to us before relying on it."
+    >
+      <h2>Who is responsible for your data</h2>
+      <p>
+        Fire Studio, based in {site.city}, {site.region}, Mexico, is responsible for processing the personal
+        data you provide through this site. You can reach us at <a href={mailHref}>{site.email}</a>.
+      </p>
+
+      <h2>What we collect</h2>
+      <ul>
+        <li>What you enter in the audit form: your store address, your email, an approximate monthly sales range and the language you prefer for the audit.</li>
+        <li>What you send us on WhatsApp or by email: your name, your phone number and whatever you tell us about your project.</li>
+        <li>Browsing data collected with cookies and measurement tools: pages visited, traffic source and device type.</li>
+      </ul>
+      <p>We do not request or process sensitive personal data, or financial data, through this site.</p>
+
+      <h2>What we use it for</h2>
+      <ul>
+        <li>Preparing and sending you the audit you requested.</li>
+        <li>Answering your messages and following up on them.</li>
+        <li>Preparing and sending you service proposals.</li>
+        <li>Measuring how the site and our advertising campaigns perform.</li>
+      </ul>
+
+      <h2>Who we share it with</h2>
+      <p>
+        We do not sell your data. We share it only with the providers that help us run the site and
+        follow up with you, and only for that purpose:
+      </p>
+      <ul>
+        <li><strong>HubSpot</strong> (United States), as our contact management system.</li>
+        <li><strong>Vercel</strong> (United States), where this site is hosted.</li>
+        <li><strong>Meta</strong> and <strong>Google</strong>, to measure campaign results and site traffic.</li>
+      </ul>
+      <p>
+        These providers may store the information outside Mexico. By sending us your data you accept
+        that transfer, which is limited to the purposes described above.
+      </p>
+
+      <h2>Cookies</h2>
+      <p>
+        We use first- and third-party cookies to remember your preferences and to measure site
+        traffic and campaign results. You can reject them from the notice shown on arrival and clear
+        them at any time from your browser settings. Rejecting them does not prevent you from using
+        the site.
+      </p>
+
+      <h2>Your rights</h2>
+      <p>
+        You can request access to, correction of, deletion of, or object to the processing of your
+        personal data, and withdraw your consent, by writing to <a href={mailHref}>{site.email}</a>.
+        Tell us your name, a way to reach you and what you are asking for. We will reply through the
+        same channel.
+      </p>
+
+      <h2>Retention</h2>
+      <p>
+        We keep your data for as long as there is a business relationship or an interest in starting
+        one, and afterwards for as long as legal or tax obligations require.
+      </p>
+
+      <h2>Changes to this notice</h2>
+      <p>
+        We may update this notice when our services or the applicable rules change. The version in
+        force is always the one published on this page, with its update date.
+      </p>
+    </LegalArticle>
+  </main>
+  <Footer lang={lang} />
+</Layout>
