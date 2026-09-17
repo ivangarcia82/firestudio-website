@@ -163,7 +163,6 @@ const f = t.audit.form;
     font-size: 13px;
     color: var(--fs-heat-3);
   }
-  .error[hidden] { display: none; }
 
   .honeypot {
     position: absolute;
@@ -191,7 +190,6 @@ const f = t.audit.form;
     font-size: 15px;
     line-height: 1.5;
   }
-  .status[hidden] { display: none; }
   .status--ok { background: var(--fs-accent-soft); color: var(--fs-ink); }
   .status--error { background: rgba(216, 64, 42, 0.1); color: var(--fs-ink); }
   .status :global(.status-wa) { display: inline-flex; margin-top: 12px; }
@@ -235,6 +233,13 @@ const f = t.audit.form;
       if (first) fieldEl(first)?.focus();
     }
 
+    /** Human label of the picked revenue range, for the WhatsApp message. */
+    function revenueLabel(value: string) {
+      const select = form.querySelector<HTMLSelectElement>('[name="revenue"]');
+      const option = select?.querySelector<HTMLOptionElement>(`option[value="${value}"]`);
+      return option?.textContent?.trim() || value;
+    }
+
     function readForm() {
       const data = new FormData(form);
       return {
@@ -256,7 +261,7 @@ const f = t.audit.form;
           : 'Hola, quiero la auditoría gratis de mi tienda.',
         `${d.lang === 'en' ? 'Store' : 'Tienda'}: ${store}`,
         `${d.lang === 'en' ? 'Email' : 'Correo'}: ${payload.email}`,
-        `${d.lang === 'en' ? 'Monthly sales' : 'Ventas mensuales'}: ${payload.revenue}`,
+        `${d.lang === 'en' ? 'Monthly sales' : 'Ventas mensuales'}: ${revenueLabel(payload.revenue)}`,
         `${d.lang === 'en' ? 'Language' : 'Idioma'}: ${payload.language}`,
       ];
       return `https://wa.me/${number}?text=${encodeURIComponent(lines.join('\n'))}`;

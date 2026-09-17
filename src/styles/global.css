@@ -63,7 +63,16 @@
 
 * { box-sizing: border-box; }
 
+/* The UA `[hidden] { display: none }` rule loses to any author `display`
+   value, so components that set `display: flex` would stay visible when
+   hidden. Make the attribute authoritative. */
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; }
+
+/* The nav is sticky, so anchor targets need to clear it. */
+:target,
+[id] { scroll-margin-top: 84px; }
 
 body {
   margin: 0;

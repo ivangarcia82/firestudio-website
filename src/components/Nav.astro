@@ -59,6 +59,16 @@ const booking = bookingHref(lang);
     <summary aria-label={t.nav.menu}><span aria-hidden="true"></span></summary>
     <div class="nav-mobile-panel">
       {t.nav.links.map((l) => <a href={sectionHref(lang, l.id)} class="nav-link">{l.label}</a>)}
+      <a
+        href={booking}
+        target={booking.startsWith('http') ? '_blank' : null}
+        rel={booking.startsWith('http') ? 'noopener' : null}
+        class="btn btn--sm"
+        data-track="schedule"
+        data-track-placement="nav-mobile"
+      >
+        {t.nav.cta}
+      </a>
     </div>
   </details>
 </nav>
